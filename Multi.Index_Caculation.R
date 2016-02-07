@@ -55,7 +55,7 @@ names(multi.data) <- dir.data
 head(multi.data$Area.dist.matrix,5L)
 
 ## Now the DT calculation.
-i <- 1; j <- 1
+
 # For each i in multiphylo
 for (i in 1:length(multi.phylo)){
   # And for each distribution data
@@ -110,7 +110,7 @@ multi.phylo ## All phylogenies in a list
 # Now the calculation of PD, this calculation don't inlcude de root.
 
 ## Now the PD calculation.
-i <- 1; j <- 1
+
 # For each i in multiphylo
 for (i in 1:length(multi.phylo)){
   # And for each distribution data
