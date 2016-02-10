@@ -25,22 +25,23 @@ library(SDMTools)
 ###########################################################################################
 
 # Set working directory.
-setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Genes/Mammals/Mammals.Trees/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Phyml/Ene8/")
 
 # Read the directory.
-dir.tree <- dir("/home/omar/Documentos/Omar/Tesis/Scripts/Genes/Mammals/Mammals.Trees/")
+dir.tree <- dir()[grep("tree.txt",dir())]
 
 # Creat a empty list where we will put the trees.
 multi.phylo <- list()
 
 for (i in 1:length(dir.tree)){
   tree <- read.tree(dir.tree[i]) # Read each tree and...
+  plot.phylo(tree)
   multi.phylo[[i]] <- tree # Put inside the list, at the enda we create a multiphylo object.
 }
 
 # Create a multidata with the ocurrences files created before.
 
-setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Genes/Mammals/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
 dir.data <-(dir()[grep(".matrix",dir())])
 dir.data <- dir.data[-grep(".matrix~",dir.data)]
 
@@ -55,7 +56,7 @@ names(multi.data) <- dir.data
 head(multi.data$Area.dist.matrix,5L)
 
 ## Now the DT calculation.
-
+#i <- 1; j <- 1
 # For each i in multiphylo
 for (i in 1:length(multi.phylo)){
   # And for each distribution data
@@ -79,7 +80,7 @@ for (i in 1:length(multi.phylo)){
       dist$especie <- sp
     }
     # Set the directory where the results will put
-    setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Genes/Results/")
+    setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
     # Dt index calculation
     Ind <- Calculate.Index(tree=multi.phylo[[i]],dist=dist)
     # Create the output file name
@@ -88,6 +89,49 @@ for (i in 1:length(multi.phylo)){
     write.csv(Ind,file = file,row.names = F,quote = F)
   }
 }
+
+# Sum all DT results.
+# Setworking Dircetory
+
+
+dir <- dir()[grep(".res",dir())]
+# Finn each kind of result
+enar <- dir[grep("Area",dir)]
+g1 <- dir[grep("1g",dir)]
+g25 <- dir[grep("25g",dir)]
+g50 <- dir[grep("50g",dir)]
+pnn <- dir[grep("PNN",dir)]
+
+# Create a list with all type data
+# and a empty list where the results will put
+sumas <- list(enar,g1,g25,g50,pnn)
+total <- list()
+
+for (i in 1:length(sumas)){
+  # Extract the names of the areas
+  name.data <- read.csv(sumas[[i]][1])$area
+  # Sum the two first data
+  suma <- read.csv(sumas[[i]][1]) + read.csv(sumas[[i]][2])
+  
+  for(j in 3:length(sumas[[i]])){
+    # Sum the rest of the data
+    suma <- suma + read.csv(sumas[[i]][j])
+  }
+  # Because characters aren't summables, NA are introduced during summatory
+  # Add original labels
+  suma$area <- name.data
+  # Finally each total summatory for each data kind are put in the total list
+  total[[i]] <- suma
+}
+
+# Add respective names to the list
+names(total) <- c("DTenar.total","DTg1.total","DTg25.total","DTg50.total","DTPNN.total")
+# Save all results.
+for ( i in 1:length(total)){
+  write.csv(x=total[[i]],file=names(total)[i],row.names = F,quote = F)
+}
+
+system("rm *.res")
 
 ############################################################################################################
 ############################################################################################################
@@ -110,7 +154,7 @@ multi.phylo ## All phylogenies in a list
 # Now the calculation of PD, this calculation don't inlcude de root.
 
 ## Now the PD calculation.
-
+#i <- 1; j <- 1
 # For each i in multiphylo
 for (i in 1:length(multi.phylo)){
   # And for each distribution data
@@ -150,15 +194,59 @@ for (i in 1:length(multi.phylo)){
     # Always the outgroup is the tip label 1, so this will be the rooting terminal
     # If there are a basal politomy, resolve.root fix it.
     
-    tree.root <- root(multi.phylo[[i]], outgroup = multi.phylo[[i]]$tip.label[1],resolve.root = T)
+    #tree.root <- root(multi.phylo[[5]], outgroup = "Corvus_corax",resolve.root = T)
     
     # Create the output file name, set working directory and save th results.
-    pd <- pd(samp = dist, tree = tree.root, include.root = F)
-    setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Genes/Results/")
+    pd <- pd(samp = dist, tree = multi.phylo[[i]] , include.root = T)
+    setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
     file <- paste(paste(dir.tree[i],dir.data[j],sep = "_"),".res")
     write.csv(pd,file = file, row.names = T, quote = F)
   }
 }
+
+# Sum all PD results.
+# Setworking Dircetory
+#setwd("")
+
+dir <- dir()[grep(".res",dir())]
+# Finn each kind of result
+enar <- dir[grep("Area",dir)]
+g1 <- dir[grep("1g",dir)]
+g25 <- dir[grep("25g",dir)]
+g50 <- dir[grep("50g",dir)]
+pnn <- dir[grep("PNN",dir)]
+
+# Create a list with all type data
+# and a empty list where the results will put
+
+sumas <- list(enar,g1,g25,g50,pnn)
+total <- list()
+
+for (i in 1:length(sumas)){
+  # Extract the names of the areas
+  name.data <- read.csv(sumas[[i]][1])$X
+  # Sum the two first data
+  suma <- read.csv(sumas[[i]][1]) + read.csv(sumas[[i]][2])
+  
+  for(j in 3:length(sumas[[i]])){
+    # Sum the rest of the data
+    suma <- suma + read.csv(sumas[[i]][j])
+  }
+  # Because characters aren't summables, NA are introduced during summatory
+  # Add original labels
+  suma$X <- name.data
+  # Finally each total summatory for each data kind are put in the total list
+  total[[i]] <- suma
+}
+
+# Add respective names to the list
+names(total) <- c("PDenar.total","PDg1.total","PDg25.total","PDg50.total","PDPNN.total")
+# Save all results.
+for ( i in 1:length(total)){
+  write.csv(x=total[[i]],file=names(total)[i],row.names = F,quote = F)
+}
+
+system("rm *.res")
 
 ###############################################################################################
 ###############################################################################################
@@ -232,9 +320,55 @@ for (i in 1:length(multi.phylo)){
                         EDstar=avdt$EDstar,
                         EDplus=avdt$EDplus)
     # Create output file name, set workig directory and save results.
-    setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Genes/Results/")
+    setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
     file <- paste(paste(dir.tree[i],dir.data[j],sep = "_"),".res")
     write.table(avdt2,file=file,row.names=T,col.names = T,quote=F,sep=",")
     
   }
 }
+
+
+# Sum all PD results.
+# Setworking Dircetory
+setwd("")
+
+dir <- dir()[[grep(".res",dir())]
+# Finn each kind of result
+enar <- dir[grep("Area",dir)]
+g1 <- dir[grep("1g",dir)]
+g25 <- dir[grep("25g",dir)]
+g50 <- dir[grep("50g",dir)]
+pnn <- dir[grep("PNN",dir)]
+
+# Create a list with all type data
+# and a empty list where the results will put
+sumas <- list(enar,g1,g25,g50,pnn)
+total <- list()
+
+for(i in 1:length(sumas)){
+  aa <- read.csv(sumas[[i]][1])
+  aa[is.na(aa)] <- 0
+  
+  bb <- read.csv(sumas[[i]][2])
+  bb[is.na(bb)] <- 0
+  
+  suma <- aa + bb
+  
+  for(j in 3:length(sumas[[i]])){
+    cc <- read.csv(sumas[[i]][j])
+    cc[is.na(cc)] <- 0
+    
+    suma <- suma+cc
+  }
+  
+  total[[i]] <- suma
+}
+
+# Add respective names to the list
+names(total) <- c("AVDTenar.total","AVDTg1.total","AVDTg25.total","AVDTg50.total","AVDTPNN.total")
+# Save all results.
+for ( i in 1:length(total)){
+  write.csv(x=total[[i]],file=names(total)[i],row.names = F,quote = F)
+}
+
+system("rm *.res")
