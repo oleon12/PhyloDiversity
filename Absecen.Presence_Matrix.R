@@ -55,7 +55,7 @@ for(i in 1:length(area)){
     # Compare if at least one georeference point are inside the area polygon.
     out <- pnt.in.poly(sp.data,area[[i]]$shp[[1]]$points)
     # If a point are inside the area polygon, will fill his respective space with 1.
-    if (1%in%out$pip){ data.abpre[j,i]<- 1} 
+    if (1%in%out$pip){ data.abpre[j,i]<- 1; print(area.dir[i])} 
   }
 }
 
@@ -70,7 +70,7 @@ write.table(data.abpre,file="Area.dist.matrix",row.names=T, col.names=T,quote=F,
 # Read the grid from his respective directory.
 
 setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Distribution/shp/Grid/")
-grid.g <- read.shp("grid_1g.shp")
+grid.g <- read.shp("grid_50g.shp")
 
 # Create a matrix filled with 0, the rows will be the species and the columns will be the areas.
 # This will be our absece/presence matrix.
@@ -84,20 +84,20 @@ registerDoParallel(cl)
 
 for(i in 1:length(data.grid[,1])){
   print(paste("Total species:",length(data.grid[,1])," "))
-  print(i) # Checkpoint
+  print(paste("Specie:",i,sep="")) # Checkpoint
   for (j in 1:length(grid.g$shp)){
     # Extrac only the Lat and Long for a j specie given the data.grid matrix.
     sp.data <- sp.dist[which(sp.dist$especie==rownames(data.grid)[i]),2:3]
     # Compare if at least one georeference point are inside the area polygon.
-    out <- pnt.in.poly(sp.data,grid.g$shp[[1]]$points)
+    out <- pnt.in.poly(sp.data,grid.g$shp[[j]]$points)
     # If a point are inside the area polygon, will fill his respective space with 1.
-    if(1%in%out$pip){data.grid[i,j]<-1}
+    if(1%in%out$pip){data.grid[i,j]<-1; print(paste("Cell with presence",j,sep=""))}
   }
 }
 
 # Save the created data.
 setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
-write.table(data.grid,file="grid_1g.dist.matrix",row.names=T, col.names=T,quote=F,sep=",")
+write.table(data.grid,file="grid_50g.dist.matrix",row.names=T, col.names=T,quote=F,sep=",")
 
 
 # Read the PNN shp file from his respective directory.
@@ -122,17 +122,17 @@ registerDoParallel(cl)
 
 for(i in 1:length(PNN)){
   print(paste("Total PNN:",length(PNN),sep=""))
-  print(dir[i])
+  print(paste("PNN #:",i,sep=""))
   for(j in 1:length(data.PNN[,1])){
     # Extrac only the Lat and Long for a j specie given the data.abpre matrix.
     sp.data <- sp.dist[which(sp.dist$especie==rownames(data.PNN)[j]),2:3]
     # Compare if at least one georeference point are inside the area polygon.
     out <- pnt.in.poly(sp.data,PNN[[i]]$shp[[1]]$points)
     # If a point are inside the area polygon, will fill his respective space with 1.
-    if (1%in%out$pip){ data.PNN[j,i]<- 1} 
+    if (1%in%out$pip){ data.PNN[j,i]<- 1; print(i)} 
   }
 }
 
 # Save the created data.
 setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
-write.table(data.grid,file="PNN.dist.matrix",row.names=T, col.names=T,quote=F,sep=",")
+write.table(data.PNN,file="PNN.dist.matrix",row.names=T, col.names=T,quote=F,sep=",")
