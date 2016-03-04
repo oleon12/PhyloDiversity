@@ -182,7 +182,7 @@ for (ii in 1:100){
   ## Resampling from the species distribution
   ## 25% of species will resample
   rem.samp <- match.sp[sample(x = 1:length(match.sp), size = 0.25*length(match.sp))]
-  
+  print(paste("Iteration",ii,sep = ":"))
   
   for (i in 1:length(multi.phylo)){
     # And for each distribution data
@@ -206,6 +206,10 @@ for (ii in 1:100){
         dist$especie <- sp
       }
       
+      ## Remove species
+      
+      dist[which(dist$especie%in%rem.samp),2:length(colnames(dist))] <- 0
+      
       # First, extract colnames and species in different vectors.
       sp.dist0 <- dist$especie
       areas0 <- colnames(dist)
@@ -218,7 +222,7 @@ for (ii in 1:100){
       colnames(dist2) <- sp 
       
       # DT Calculation
-      Ind <- Calculate.Index(tree=multi.phylo[[i]],dist=dist)
+      Ind <- Calculate.Index(tree=multi.phylo[[i]],dist=dist,verbose = F)
       
       name.data <- Ind$area
       if(i == 1){
@@ -272,3 +276,5 @@ for (ii in 1:100){
   }
   
 }
+
+
