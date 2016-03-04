@@ -68,6 +68,7 @@ for (i in 1:length(multi.phylo)){
   
   tax <- multi.phylo[[i]]$tip.label
   dead.pool <- c(dead.pool,tax)
+
 }
 
 # All species from phylogenies
@@ -270,11 +271,22 @@ for (ii in 1:100){
   }
   
   for(xx in 1:length(dt.origin)){
-    if(dt.jack[[xx]]$I==dt.origin[[xx]]$I){dt.match[[xx]][ii] <- 1}
-    if(pd.jack[[xx]]$PD==pd.origin[[xx]]$PD){pd.match[[xx]][ii] <- 1}
-    if(avdt.jack[[xx]]$Dplus==avtd.origin[[xx]]$Dplus){avtd.match[[xx]][ii] <- 1}
+    if(dt.jack[[xx]]$I==dt.origin[[xx]]$I){dt.match[[xx]][ii] <- 1; print("Equal")}else{dt.match[[xx]][ii] <- 0; print("Non-equal")}
+    if(pd.jack[[xx]]$PD==pd.origin[[xx]]$PD){pd.match[[xx]][ii] <- 1; print("Equal")}else{pd.match[[xx]][ii] <- 0; print("Non-equal")}
+    if(avdt.jack[[xx]]$Dplus==avtd.origin[[xx]]$Dplus){avtd.match[[xx]][ii] <- 1; print("Equal")}else{avtd.match[[xx]][ii] <- 0; print("Non-equal")}
   }
   
 }
 
+r.support <- matrix(0, nrow = length(dt.match), ncol = 3)
 
+colnames(r.support) <- c("DT","PD","AvDT")
+rownames(r.support) <- names(multi.data)
+
+for(k in 1:length(rownames(r.support))){
+
+  r.support[k,] <- c(length(which((dt.match[[k]]==1)==T))/100,length(which((dt.match[[k]]==1)==T))/100,length(which((dt.match[[1]]==1)==T))/100) 
+
+}
+
+r.support
