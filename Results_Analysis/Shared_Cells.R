@@ -1,3 +1,37 @@
+## Autor
+# Leon-Alvarado, Omar Daniel.
+# leon.alvarado12@gmail.com
+
+## License
+# The follow script was created under the GNU/GPLv2. license.
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+
+## Title
+# Cells of Grid Comparisons. 
+
+## Description
+# The R cuantify the percentage of shared cells of grid given a quantile classification.
+# The construction of this script was specific for only three phylogenetic index (DT, PD and AvTDT),
+# so, if you want to make comparisons with more or less indexes, you must need modify the script.
+#
+# First, a classification of the values of the three index are made using quantiles.
+# then, looking for those cells who was classified in the two last quantiles (4 and 5) for each index
+# and makes a pairwise comparison index, cuantifying the percentage of shared cells.
+#
+# Pairwise comparisons:
+# 1.) DT + PD
+# 2.) DT + AvTD
+# 3.) PD + AvTD
+#
+# The results is a matrix with three shared percentage: A%, B% and A+B% for each comparison
+# A% = Total shared cells / Total Cells of the Left index
+# B% = Total shared cells / Total Cells of the Right index
+# A+B% = Total shared cells / (Total Cells of Left index + Total Cells of the Right index)
+#
+# How to now what is the right or left index ?
+# e.g. DT + PD == Left index + Rigth index
+
+
 ## Cell index values comparison 
 library(classInt)
 
