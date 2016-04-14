@@ -28,7 +28,7 @@
 # B% = Total shared cells / Total Cells of the Right index
 # A+B% = Total shared cells / (Total Cells of Left index + Total Cells of the Right index)
 #
-# How to now what is the right or left index ?
+# How to know what is the right or left index ?
 # e.g. DT + PD == Left index + Rigth index
 
 
