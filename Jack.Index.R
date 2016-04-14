@@ -1,7 +1,25 @@
-# This script perfomance a Jacknife support for three phylogenetic diversityy index.
-# To use this script only nee to change the working directory
-# DT function requiere a very specific data format, check it at the package example
+## Autor
+# Leon-Alvarado, Omar Daniel.
+# leon.alvarado12@gmail.com
 
+## License
+# The follow script was created under the GNU/GPLv2. license.
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+
+## Title
+# Jackknife implementation for Multiple Phylogenetic Diversity Index 
+
+## Description
+# This R scripts perfomance the a Jackknife calculation for Taxonomic Distincness (DT) (Vane-Wrigth et al. 1991), Phylogenetic Diversity (PD) (Faith 1992) and Average Taxonomic Distincness (AvTD) (Clarke & Warwick 1998) index for multiple distribution matrices and phylogenies
+# This script requires two list objects: 
+# 1. A list object with distribution matrices.
+# 2. A list object with phylogenies.
+# Species' names must be the same in the distribution matrices and phylogenies.
+# The distribution matrices format to use are very specific, the same implemented in the package Jrich (Dmirandae/Jrich), see packages examples
+# To use this script must change the working directories
+# The numbers of iterations could be change modifying the lenght of the ii variable in the first loop for.
+# Also, the remotion percetange could be change modifying the default value (0.25) in the variable rem.samp at the beginning of the first loop for.
+# The script returns a matrix with Jackknife support value of the index for each distibution matrix. 
 ## Load libraries.
 
 library(rgeos)
