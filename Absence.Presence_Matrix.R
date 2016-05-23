@@ -1,3 +1,22 @@
+## Autor
+# Leon-Alvarado, Omar Daniel.
+# leon.alvarado12@gmail.com
+
+## License
+# The follow script was created under the GNU/GPLv2. license.
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+
+## Title
+# Absence/Presence Matrix.
+
+## Description
+# This R scripts create a absebce/presence matrix for the calculation of Taxonomic Distincness (DT) (Vane-Wrigth et al. 1991), Phylogenetic Diversity (PD) (Faith 1992) and Average Taxonomic Distincness (AvTD) (Clarke & Warwick 1998) indeces
+# The script take all occurrences from each species and determines if have at least one point inside an area
+# The script requieres a file with the occurrences. This file must have three colums:
+# Species_Colum | Latitude_Colum | Longitude_Colum
+# The files used for the areas are shapes build in QGIS.
+# The outcome is a matrix object with species as rows and areas as colums, filled with 0/1
+
 ## Load libraries
 
 library(rgeos)
