@@ -1,3 +1,20 @@
+## Autor
+# Leon-Alvarado, Omar Daniel.
+# leon.alvarado12@gmail.com
+
+## License
+# The follow script was created under the GNU/GPLv2. license.
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+
+## Title
+# Endemic_MultindexCalculation
+
+## Description
+# This R script perfomace a kind of Jackknife focused only in Endemic species. It remove those species from the indeces calculation aa% in ii times.
+# an Endemic species it is one that have a distribution restricted only inside and Area of endemism.
+# The file requiere for this script is a absence/presence matrix. 
+# The outcome file is 3 list corresponding to the three indeces. Each list have (NumberOfMatrices X NumberOfRemove%) slots and each one have ii Index values for each area
+
 
 ## Load libraries.
 
