@@ -17,8 +17,9 @@
 # Species' names must be the same in the distribution matrices and phylogenies.
 # The distribution matrices format to use are very specific, the same implemented in the package Jrich (Dmirandae/Jrich), see packages examples
 # To use this script must change the working directories
+# Two outcomes will generate, first a table with general information about species. Second a 3 list objecc correspond to each phylogenetic diversity index
 
-## Load libraries
+## Load libraries.
 
 library(rgeos)
 library(maptools)
@@ -32,32 +33,30 @@ library(picante)
 library(jrich)
 library(SDMTools)
 
-###########################################################################################
-###########################################################################################
-##                                                                                       ##
-##                                        DT CALCULATION                                 ##
-##                                                                                       ##
-###########################################################################################
-###########################################################################################
+## Load the phylogenies and distributions
+
 
 # Set working directory.
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Phyml/Ene8/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Trees/")
 
 # Read the directory.
-dir.tree <- dir()[grep("tree.txt",dir())]
+dir.tree <- dir()[grep("_tree",dir())]
+#dir.tree <- dir.tree[-grep("~",dir.tree)]
 
 # Creat a empty list where we will put the trees.
 multi.phylo <- list()
 
 for (i in 1:length(dir.tree)){
   tree <- read.tree(dir.tree[i]) # Read each tree and...
-  plot.phylo(tree)
+  #plot.phylo(tree)
   multi.phylo[[i]] <- tree # Put inside the list, at the enda we create a multiphylo object.
 }
 
+names(multi.phylo) <- dir.tree
+
 # Create a multidata with the ocurrences files created before.
 
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/")
 dir.data <-(dir()[grep(".matrix",dir())])
 dir.data <- dir.data[-grep(".matrix~",dir.data)]
 
@@ -69,220 +68,56 @@ for(i in 1:length(dir.data)){
 
 # Set names for each data.
 names(multi.data) <- dir.data
-head(multi.data$Area.dist.matrix,5L)
+str(multi.data)
+multi.data$PNN.dist.matrix <- cbind(multi.data$Area.dist.matrix$especie,multi.data$PNN.dist.matrix)
+multi.data$PNN.dist.matrix <- multi.data$PNN.dist.matrix[,-2]
+colnames(multi.data$PNN.dist.matrix)[1] <- "especie"
+str(multi.data$PNN.dist.matrix)
+## Extract the tips from all phylogenies
+## Those species will be our pool data species, for the permutation
 
-## Now the DT calculation.
-#i <- 1; j <- 1
-# For each i in multiphylo
+## Vector where the species will put
+
+dead.pool <- c()
+bl <- c()
+tree.ref <- c()
+
+## Extract all species terminals
+
 for (i in 1:length(multi.phylo)){
-  # And for each distribution data
-  for(j in 1:length(multi.data)){
-    # Both data have the same species ? Extrac from the data distribution only the species shared with the phylogeny
-    dist<- multi.data[[j]][which((multi.data[[j]]$especie%in%multi.phylo[[i]]$tip.label)==T),]
-    # Sometimes after the below process are more species in the phylogeny than the distribution data
-    if(length(dist$especie)<length(multi.phylo[[i]]$tip.label)){
-      # Extrac from the phylogeny the specie that miss in the data distribution
-      miss.sp <- multi.phylo[[i]]$tip.label[which((multi.phylo[[i]]$tip.label%in%dist$especie)==F)]
-      # Create a vector with distribution species and the miss specie, it will be necessary next.
-      sp <- c(as.character(dist$especie),miss.sp)
-      # Now attach the miss specie(s) to the distribution matrix.
-      # Because this specie not present occurences in the area, the row will fill with 0
-      for (x in 1:length(miss.sp)){
-        dist.tmp <- rep(NA,length(colnames(dist)))
-        dist <- rbind(dist,dist.tmp)
-        dist[length(dist$especie),2:length(colnames(dist))] <- 0
-      }
-      # Now replace the species column with the sp vector created before
-      dist$especie <- sp
-    }
-    # Set the directory where the results will put
-    setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
-    # Dt index calculation
-    Ind <- Calculate.Index(tree=multi.phylo[[i]],dist=dist)
-    # Create the output file name
-    file <- paste(paste(dir.tree[i],dir.data[j],sep = "_"),".res")
-    # Save the results
-    write.csv(Ind,file = file,row.names = F,quote = F)
-  }
-}
-
-# Sum all DT results.
-# Setworking Dircetory
-
-
-dir <- dir()[grep(".res",dir())]
-# Finn each kind of result
-enar <- dir[grep("Area",dir)]
-g1 <- dir[grep("1g",dir)]
-g25 <- dir[grep("25g",dir)]
-g50 <- dir[grep("50g",dir)]
-pnn <- dir[grep("PNN",dir)]
-
-# Create a list with all type data
-# and a empty list where the results will put
-sumas <- list(enar,g1,g25,g50,pnn)
-total <- list()
-
-for (i in 1:length(sumas)){
-  # Extract the names of the areas
-  name.data <- read.csv(sumas[[i]][1])$area
-  # Sum the two first data
-  suma <- read.csv(sumas[[i]][1]) + read.csv(sumas[[i]][2])
   
-  for(j in 3:length(sumas[[i]])){
-    # Sum the rest of the data
-    suma <- suma + read.csv(sumas[[i]][j])
-  }
-  # Because characters aren't summables, NA are introduced during summatory
-  # Add original labels
-  suma$area <- name.data
-  # Finally each total summatory for each data kind are put in the total list
-  total[[i]] <- suma
-}
-
-# Add respective names to the list
-names(total) <- c("DTenar.total","DTg1.total","DTg25.total","DTg50.total","DTPNN.total")
-# Save all results.
-for ( i in 1:length(total)){
-  write.csv(x=total[[i]],file=names(total)[i],row.names = F,quote = F)
-}
-
-system("rm *.res")
-
-############################################################################################################
-############################################################################################################
-##                                                                                                        ##
-##                                           PD CALCULATION                                               ##
-##                                                                                                        ##
-############################################################################################################
-############################################################################################################
-
-## The same directory and the same multi phylo and data will be used
-## The script will be too similar to the DT scripts with few variations
-## Similar variables to DT CALCULATION
-
-dir.data ## Directory of the distribution data
-dir.tree ## Directory of the Phylogenies 
-multi.data ## All distribution data in a list
-multi.phylo ## All phylogenies in a list
-
-#####################################################################
-# Now the calculation of PD, this calculation don't inlcude de root.
-
-## Now the PD calculation.
-#i <- 1; j <- 1
-# For each i in multiphylo
-for (i in 1:length(multi.phylo)){
-  # And for each distribution data
-  for(j in 1:length(multi.data)){
-    # Both data have the same species ? Extrac from the data distribution only the species shared with the phylogeny
-    dist<- multi.data[[j]][which((multi.data[[j]]$especie%in%multi.phylo[[i]]$tip.label)==T),]
-    # Sometimes after the below process are more species in the phylogeny than the distribution data
-    if(length(dist$especie)<length(multi.phylo[[i]]$tip.label)){
-      # Extrac from the phylogeny the specie that miss in the data distribution
-      miss.sp <- multi.phylo[[i]]$tip.label[which((multi.phylo[[i]]$tip.label%in%dist$especie)==F)]
-      # Create a vector with distribution species and the miss specie, it will be necessary next.
-      sp <- c(as.character(dist$especie),miss.sp)
-      # Now attach the miss specie(s) to the distribution matrix.
-      # Because this specie not present occurences in the area, the row will fill with 0
-      for (x in 1:length(miss.sp)){
-        dist.tmp <- rep(NA,length(colnames(dist)))
-        dist <- rbind(dist,dist.tmp)
-        dist[length(dist$especie),2:length(colnames(dist))] <- 0
-      }
-      # Now replace the species column with the sp vector created before
-      dist$especie <- sp
-    }
-    #At this moment begin all variations from DT calculation.
-    
-    # First, extract colnames and species in different vectors.
-    sp.dist0 <- dist$especie
-    areas0 <- colnames(dist)
-    
-    # Remove the species colum, and the transpose the matrix.
-    # The transpose is necessary for PD function.
-    dist<- dist[,-1]
-    dist <- t(dist)
-    # Put the species' names as column names
-    colnames(dist) <- sp
-    
-    # For PD function a rooted tree is required. Root the tree.
-    # Always the outgroup is the tip label 1, so this will be the rooting terminal
-    # If there are a basal politomy, resolve.root fix it.
-    
-    #tree.root <- root(multi.phylo[[5]], outgroup = "Corvus_corax",resolve.root = T)
-    
-    # Create the output file name, set working directory and save th results.
-    pd <- pd(samp = dist, tree = multi.phylo[[i]] , include.root = T)
-    setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
-    file <- paste(paste(dir.tree[i],dir.data[j],sep = "_"),".res")
-    write.csv(pd,file = file, row.names = T, quote = F)
-  }
-}
-
-# Sum all PD results.
-# Setworking Dircetory
-#setwd("")
-
-dir <- dir()[grep(".res",dir())]
-# Finn each kind of result
-enar <- dir[grep("Area",dir)]
-g1 <- dir[grep("1g",dir)]
-g25 <- dir[grep("25g",dir)]
-g50 <- dir[grep("50g",dir)]
-pnn <- dir[grep("PNN",dir)]
-
-# Create a list with all type data
-# and a empty list where the results will put
-
-sumas <- list(enar,g1,g25,g50,pnn)
-total <- list()
-
-for (i in 1:length(sumas)){
-  # Extract the names of the areas
-  name.data <- read.csv(sumas[[i]][1])$X
-  # Sum the two first data
-  suma <- read.csv(sumas[[i]][1]) + read.csv(sumas[[i]][2])
+  tax <- multi.phylo[[i]]$tip.label
+  dead.pool <- c(dead.pool,tax)
+  eg <- which(multi.phylo[[i]]$edge[,2]%in%1:length(multi.phylo[[i]]$tip.label))
+  aa <- multi.phylo[[i]]$edge.length[eg]
   
-  for(j in 3:length(sumas[[i]])){
-    # Sum the rest of the data
-    suma <- suma + read.csv(sumas[[i]][j])
-  }
-  # Because characters aren't summables, NA are introduced during summatory
-  # Add original labels
-  suma$X <- name.data
-  # Finally each total summatory for each data kind are put in the total list
-  total[[i]] <- suma
+  bl <- c(bl,aa)
+  
+  tree.ref <- c(tree.ref,rep(names(multi.phylo)[i],length(multi.phylo[[i]]$tip.label)))
+  
 }
 
-# Add respective names to the list
-names(total) <- c("PDenar.total","PDg1.total","PDg25.total","PDg50.total","PDPNN.total")
-# Save all results.
-for ( i in 1:length(total)){
-  write.csv(x=total[[i]],file=names(total)[i],row.names = F,quote = F)
-}
 
-system("rm *.res")
+DT.area <- c()
+DT.grid <- c()
+PD.area <- c()
+PD.grid <- c()
+AVDT.area <- c()
+AVDT.grid <- c()
 
-###############################################################################################
-###############################################################################################
-##                                                                                           ##
-##                                      AvDT CALCULATION                                     ##
-##                                                                                           ##
-###############################################################################################
-###############################################################################################
+# Find the phylogeny species that match with the distribution species
+match.sp <- dead.pool[which(dead.pool%in%multi.data[[1]]$especie)]
+match.sp
 
-## The script are the same to PD CALCULATION
-## The only differences is the creation of pairwise distance matrix from the phylogeny
-## The four same important variables
+########################################################################
 
+## Vector where the species will put
 
-dir.data ## Directory of the distribution data
-dir.tree ## Directory of the Phylogenies 
-multi.data ## All distribution data in a list
-multi.phylo ## All phylogenies in a list
+## Create empty lists for the original data results
+dt.origin <- list()
+pd.origin <- list() 
+avtd.origin <- list()
 
-## Now the calculation of the AvDT.
 
 for (i in 1:length(multi.phylo)){
   # And for each distribution data
@@ -312,19 +147,40 @@ for (i in 1:length(multi.phylo)){
     
     # Remove the species colum, and the transpose the matrix.
     # The transpose is necessary for PD function.
-    dist<- dist[,-1]
-    dist <- t(dist)
+    dist2<- dist[,-1]
+    dist2 <- t(dist2)
     # Put the species' names as column names
-    colnames(dist) <- sp
+    colnames(dist2) <- sp 
     
-    #At this moment begin all variations from DT calculation.
+    # DT Calculation
+    Ind <- Calculate.Index(tree=multi.phylo[[i]],dist=dist,verbose = F)
+    # Extract areas' name
+    name.data <- Ind$area
+    # If is the firs phylogeny, not sum
+    if(i == 1){
+      dt.origin[[j]] <- Ind
+    # But, if is not the first phylogeny, sum
+    }else{
+      # Due to characters object can't be summed, fill its colum with NA
+      dt.origin[[j]]$area <- NA
+      Ind$area <- NA
+      # Make the sum and the re-assign the areas' name
+      dt.origin[[j]] <- dt.origin[[j]] + Ind
+      dt.origin[[j]]$area<- name.data}
     
-    # AvDT requiere a pairwise distance matrix from the phylogeny.
-    # So a cophenectic distance is used.
+    #PD Calculation
+    pd <- pd(samp = dist2, tree = multi.phylo[[i]] , include.root = T)
+    # Because the areas' names are row.names, there is no problem during sum
+    if (i == 1){ 
+      pd.origin[[j]] <- pd
+    }else{
+      pd.origin[[j]] <- pd.origin[[j]] + pd}
     
+    #AvDT calculation
     tree.dist <- cophenetic.phylo(multi.phylo[[i]])
     
-    avdt <- taxondive(comm = dist, dis = tree.dist)
+    avdt <- taxondive(comm = dist2, dis = tree.dist)
+    # Because the avdt are taxodive clase, it need transform to a data.frame
     avdt2 <- data.frame(Species=avdt$Species,
                         D=avdt$D,
                         Dstar=avdt$Dstar,
@@ -335,56 +191,91 @@ for (i in 1:length(multi.phylo)){
                         ED=avdt$ED,
                         EDstar=avdt$EDstar,
                         EDplus=avdt$EDplus)
-    # Create output file name, set workig directory and save results.
-    setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Aves/Results/Ene8/")
-    file <- paste(paste(dir.tree[i],dir.data[j],sep = "_"),".res")
-    write.table(avdt2,file=file,row.names=T,col.names = T,quote=F,sep=",")
+    
+    if(i == 1){
+      avtd.origin[[j]] <- avdt2
+    }else{
+      
+      avdt2[is.na(avdt2)] <- 0
+      avtd.origin[[j]][is.na(avtd.origin[[j]])] <- 0
+      
+      avtd.origin[[j]] <- avtd.origin[[j]] + avdt2}
+    
+    ## Add the phylogenetic value of each phylogeny to a specific vector
+    # 1 is for areas of endemism 
+    # 2 is for cells of grid
+    if(j==1){
+      DT.area <- c(DT.area,rep(sum(Ind$W),length(dist$especie)))
+      PD.area <- c(PD.area,rep(sum(pd$PD),length(dist$especie)))
+      AVDT.area <- c(AVDT.area,rep(sum(avdt2$Dplus),length(dist$especie)))
+    }
+    if(j==2){
+      DT.grid <- c(DT.grid,rep(sum(Ind$W),length(dist$especie)))
+      PD.grid <- c(PD.grid,rep(sum(pd$PD),length(dist$especie)))
+      AVDT.grid <- c(AVDT.grid,rep(sum(avdt2$Dplus),length(dist$especie)))
+    }
     
   }
 }
 
+end.sp <- c()
 
-# Sum all PD results.
-# Setworking Dircetory
-setwd("")
-
-dir <- dir()[[grep(".res",dir())]
-# Finn each kind of result
-enar <- dir[grep("Area",dir)]
-g1 <- dir[grep("1g",dir)]
-g25 <- dir[grep("25g",dir)]
-g50 <- dir[grep("50g",dir)]
-pnn <- dir[grep("PNN",dir)]
-
-# Create a list with all type data
-# and a empty list where the results will put
-sumas <- list(enar,g1,g25,g50,pnn)
-total <- list()
-
-for(i in 1:length(sumas)){
-  aa <- read.csv(sumas[[i]][1])
-  aa[is.na(aa)] <- 0
+for (i in 1:length(multi.data[[1]]$especie)){
   
-  bb <- read.csv(sumas[[i]][2])
-  bb[is.na(bb)] <- 0
-  
-  suma <- aa + bb
-  
-  for(j in 3:length(sumas[[i]])){
-    cc <- read.csv(sumas[[i]][j])
-    cc[is.na(cc)] <- 0
-    
-    suma <- suma+cc
+  if(length(which(multi.data[[1]][i,]==1))==1){
+    print(paste(multi.data[[1]]$especie[i],"es endémica"))
+    end.sp <- c(end.sp,as.character(multi.data[[1]]$especie[i]))
   }
   
-  total[[i]] <- suma
 }
 
-# Add respective names to the list
-names(total) <- c("AVDTenar.total","AVDTg1.total","AVDTg25.total","AVDTg50.total","AVDTPNN.total")
-# Save all results.
-for ( i in 1:length(total)){
-  write.csv(x=total[[i]],file=names(total)[i],row.names = F,quote = F)
-}
+end.sp
 
-system("rm *.res")
+general.info <- data.frame(Sp=dead.pool,
+                           BL=bl,
+                           Tree.ref=tree.ref,
+                           DT.area=DT.area,
+                           DT.grid=DT.grid,
+                           PD.area=PD.area,
+                           PD.grid=PD.grid,
+                           AvDT.area=AVDT.area,
+                           AvDT.grid=AVDT.grid,
+                           Ende.WD=rep(NA,length(dead.pool)))
+head(general.info,7L)
+
+
+general.info$Ende.WD[which(general.info$Sp%in%end.sp)] <- rep("End",length(which(general.info$Sp%in%end.sp)))
+general.info$Ende.WD[-which(general.info$Sp%in%end.sp)] <- rep("WD",length(general.info$Ende.WD[-which(general.info$Sp%in%end.sp)]))
+
+general.info <- general.info[which(general.info$Sp%in%match.sp),]
+
+head(general.info,7L)
+
+
+write.table(general.info,file = "General.info",sep = ",", quote = F, col.names = T, row.names = F)
+
+dir.data
+
+out.names <- c("Area","grid1","grid25","grid50","PNN")
+
+all.ind <- list(dt.origin,pd.origin,avtd.origin)
+
+att <- c("DT","PD","AvTD")
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/Raw_IndexR/")
+
+for (i in 1:length(all.ind)){
+  for (j in 1:length(out.names)){
+    
+    nn <- paste(att[i],out.names[j],sep=".")
+    
+    if( i == 3){
+      write.table(all.ind[[i]][[j]], file = nn,
+                  row.names = T, col.names = T, quote = F, sep = ",")
+    }else{
+      write.table(all.ind[[i]][[j]], file = nn,
+                  row.names = F, col.names = T, quote = F, sep = ",")
+    }    
+    
+  }
+}
