@@ -54,10 +54,12 @@ for (i in 1:length(dir.tree)){
 
 # Create a multidata with the ocurrences files created before.
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Abril1/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/")
 
 dir.data <-(dir()[grep(".matrix",dir())])
 dir.data <- dir.data[-grep(".matrix~",dir.data)]
+
+dir.data <- dir.data[c(1,3)]
 
 multi.data <- list()
 
@@ -120,7 +122,7 @@ perc.rem <- c(0,.25,.50,.75,1)
 
 # Make a number sequences for the organization of the final outcome
 
-sec <- seq(from=0,to=((length(aa))*length(multi.data))-1,by=length(multi.data))
+sec <- seq(from=0,to=((length(perc.rem))*length(multi.data))-1,by=length(multi.data))
 
 ## Create three list where the results will put it
 
@@ -133,6 +135,11 @@ avdt.sum <- list()
 dt.origin <- list()
 pd.origin <- list()
 avdt.origin <- list()
+
+
+no_cores <- detectCores() 
+cl <- makeCluster(no_cores)
+registerDoParallel(cl)
 
 ## For each removal percentage do...
 for(aa in 1:length(perc.rem)){
@@ -232,18 +239,18 @@ for(aa in 1:length(perc.rem)){
       
       if (ii==1){
         
-        dt.sum[[(xx+sec[aa])]] <- list(rep(NA,30))
-        pd.sum[[(xx+sec[aa])]] <- list(rep(NA,30))
-        avdt.sum[[(xx+sec[aa])]] <- list(rep(NA,30))
+        dt.sum[[(xx+sec[aa])]] <- list(rep(NA,1))
+        pd.sum[[(xx+sec[aa])]] <- list(rep(NA,1))
+        avdt.sum[[(xx+sec[aa])]] <- list(rep(NA,1))
         
-        dt.sum[[(xx+sec[aa])]][[ii]] <- dt.origin[[xx]]$W
-        pd.sum[[(xx+sec[aa])]][[ii]] <- pd.origin[[xx]]$PD
-        avdt.sum[[(xx+sec[aa])]][[ii]] <- avdt.orgin[[xx]]$Dplus
+        dt.sum[[(xx+sec[aa])]][[1]] <- as.matrix(dt.origin[[xx]]$W)
+        pd.sum[[(xx+sec[aa])]][[1]] <- as.matrix(pd.origin[[xx]]$PD)
+        avdt.sum[[(xx+sec[aa])]][[1]] <- as.matrix(avdt.origin[[xx]]$Dplus)
       }
       
-      dt.sum[[(xx+sec[aa])]][[ii]] <- dt.origin[[xx]]$W
-      pd.sum[[(xx+sec[aa])]][[ii]] <- pd.origin[[xx]]$PD
-      avdt.sum[[(xx+sec[aa])]][[ii]] <- avdt.orgin[[xx]]$Dplus
+      dt.sum[[(xx+sec[aa])]][[1]] <- rbind(dt.sum[[(xx+sec[aa])]][[1]],as.matrix(dt.origin[[xx]]$W))
+      pd.sum[[(xx+sec[aa])]][[1]] <- rbind(pd.sum[[(xx+sec[aa])]][[1]],as.matrix(pd.origin[[xx]]$PD))
+      avdt.sum[[(xx+sec[aa])]][[1]] <- rbind(avdt.sum[[(xx+sec[aa])]][[1]],as.matrix(avdt.origin[[xx]]$Dplus))
       
     }
     
@@ -252,4 +259,78 @@ for(aa in 1:length(perc.rem)){
   
 }
 
+################################################################################
 
+Areas <- rep(dt.origin[[1]]$area,(ii+1))
+Areas <- rep(Areas,length(perc.rem))
+Areas
+
+PP <- rep(perc.rem, each=length(dt.sum[[1]][[1]]))
+
+sec2 <- seq(from=1,to=length(dt.sum),by=2)
+sec2
+
+td.val <- 0
+pd.val <- 0
+avtd.val <- 0
+
+for (i in 1:length(sec2)){
+
+  td.val <- rbind(td.val,dt.sum[[sec2[i]]][[1]])
+  pd.val <- rbind(pd.val,pd.sum[[sec2[i]]][[1]])
+  avtd.val <- rbind(avtd.val,avdt.sum[[sec2[i]]][[1]])
+
+}
+
+end1 <- cbind(td.val,pd.val,avtd.val)
+end1 <- end1[-1,]
+
+head(end1,5L)
+
+end1 <- cbind(Areas,end1,PP)
+
+colnames(end1) <- c("Area","TD","PD","AvTD","Percentage")
+
+head(end1,5L)
+
+###########################################################################
+
+Areas <- rep(dt.origin[[2]]$area,(ii+1))
+Areas <- rep(Areas,length(perc.rem))
+Areas
+
+PP <- rep(perc.rem, each=length(dt.sum[[2]][[1]]))
+
+sec2 <- seq(from=0,to=length(dt.sum),by=2)
+sec2 <- sec2[-1]
+sec2
+
+td.val <- 0
+pd.val <- 0
+avtd.val <- 0
+
+for (i in 1:length(sec2)){
+  
+  td.val <- rbind(td.val,dt.sum[[sec2[i]]][[1]])
+  pd.val <- rbind(pd.val,pd.sum[[sec2[i]]][[1]])
+  avtd.val <- rbind(avtd.val,avdt.sum[[sec2[i]]][[1]])
+  
+}
+
+end2 <- cbind(td.val,pd.val,avtd.val)
+end2 <- end2[-1,]
+
+head(end2,5L)
+
+end2 <- cbind(Areas,end2,PP)
+
+colnames(end2) <- c("Area","TD","PD","AvTD","Percentage")
+
+head(end2,5L)
+
+############################################################################
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/Endemic/")
+
+write.table(end1,"Area.end", quote = F, row.names = F, col.names = T, sep = ",")
+write.table(end2,"Grid.end", quote = F, row.names = F, col.names = T, sep = ",")
