@@ -20,6 +20,7 @@
 # The numbers of iterations could be change modifying the lenght of the ii variable in the first loop for.
 # Also, the remotion percetange could be change modifying the default value (0.25) in the variable rem.samp at the beginning of the first loop for.
 # The script returns a matrix with Jackknife support value of the index for each distibution matrix. 
+
 ## Load libraries.
 
 library(rgeos)
