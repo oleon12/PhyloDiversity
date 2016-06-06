@@ -36,13 +36,13 @@
 library(classInt)
 
 ## Set working directory
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Abril1//")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/May18/Raw_IndexR/")
 
 ## Create a data frame with index values and cell ID
-index.grid <- data.frame(Cells=read.csv("DTg25.total")$area,
-                    DT=read.csv("DTg25.total")$W,
-                    PD=read.csv("PDg25.total")$PD,
-                    AVDT=read.csv("AVDTg25.total")$Dplus)
+index.grid <- data.frame(Cells=read.csv("DT.grid25")$area,
+                         DT=read.csv("DT.grid25")$W,
+                         PD=read.csv("PD.grid25")$PD,
+                         AVDT=read.csv("AvTD.grid25")$Dplus)
 
 str(index.grid)
 
@@ -55,7 +55,7 @@ r1$Cells <- index.grid$Cells ##
 ## Classification
 for(i in 2:length(colnames(index.grid))){
   ## Made the quatiles range
-  brks <- classIntervals(index.grid[,i],n=5,style = "equal")
+  brks <- classIntervals(index.grid[,i],n=5,style = "quantile")
   brks <- brks$brks
   brks
   ## Classification given quantiles intervals.
@@ -94,4 +94,5 @@ r2[3,3] <- round((length(which(pd.imp%in%avtd.imp))/ (length(pd.imp)+length(avtd
 
 r2
 
-write.table(r2,file = "Index.ShareCells",quote = F, row.names = T, col.names = T)
+write.table(r2,file = "~/Documentos/Omar/Tesis/Taxa/Results/May18/Raw_IndexR/Index.ShareCells",
+            quote = F, row.names = T, col.names = T)
