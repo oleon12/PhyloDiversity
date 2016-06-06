@@ -1,16 +1,16 @@
 library(ggplot2)
 library(classInt)
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Abril1/Endemic/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/Endemic/")
 
-end <- read.csv("DT_area.endemic",header = T)
+end <- read.csv("Area.end",header = T)
 
 head(end,5L)
 
 png(filename = "DT_area_end.png",width = 1070,height = 699,res = 120)
 
-p <- ggplot(data = end, aes(x=factor(Percentage),y=Values))
-p + #geom_violin() +
+p <- ggplot(data = end, aes(x=factor(Percentage),y=TD))
+p + geom_violin() +
   geom_jitter(aes(colour=Area),width=0.7)+
   #geom_point(aes(x=factor(Percentage),y=mean(Values)),colour="red",shape=17,size=4)+
   ylab("Taxonomic Distincness")+ xlab("Remove %")+
@@ -22,16 +22,16 @@ dev.off()
 
 #################################################################################
 
-end <- read.csv("PD_area.endemic",header = T)
+#end <- read.csv("PD_area.endemic",header = T)
 
 head(end,5L)
 
 png(filename = "PD_area_end.png",width = 1070,height = 699,res = 120)
 
-p <- ggplot(data = end, aes(x=factor(Percentage),y=Values))
+p <- ggplot(data = end, aes(x=factor(Percentage),y=PD))
 p + geom_violin() +
   geom_jitter(aes(colour=Area))+
-  geom_point(aes(x=factor(Percentage),y=mean(Values)),colour="red",shape=17,size=4)+
+  #geom_point(aes(x=factor(Percentage),y=mean(PD)),colour="red",shape=17,size=4)+
   ylab("Phylogenetic Diversity")+ xlab("Remove %")+
   ggtitle("Endemic species for areas of endemism (PD)")+
   scale_color_brewer(palette = "Paired")+
@@ -41,16 +41,16 @@ dev.off()
 
 ##################################################################################
 
-end <- read.csv("AvDT_area.endemic",header = T)
+#end <- read.csv("AvDT_area.endemic",header = T)
 
 head(end,5L)
 
 png(filename = "AvDT_area_end.png",width = 1070,height = 699,res = 120)
 
-p <- ggplot(data = end, aes(x=factor(Percentage),y=Values))
+p <- ggplot(data = end, aes(x=factor(Percentage),y=AvTD))
 p + geom_violin() +
   geom_jitter(aes(colour=Area))+
-  geom_point(aes(x=factor(Percentage),y=mean(Values)),colour="red",shape=17,size=4)+
+  #geom_point(aes(x=factor(Percentage),y=mean(Values)),colour="red",shape=17,size=4)+
   ylab("Average Taxonomic Distincness")+ xlab("Remove %")+
   ggtitle("Endemic species for areas of endemism (AvTD)")+
   scale_color_brewer(palette = "Paired")+
@@ -77,8 +77,8 @@ png(filename = "DT_grid25Q5_end.png",width = 1070,height = 699,res = 120)
 
 p <- ggplot()
 p +geom_jitter(aes(x=factor(end$Percentage[q5]),
-                  y=end$Values[q5],
-                  colour=end$Area[q5]))+
+                   y=end$Values[q5],
+                   colour=end$Area[q5]))+
   theme(legend.position = "none")+ 
   geom_violin(aes(x=factor(end$Percentage[q5]),y=end$Values[q5]))+
   ylab("Taxonomic Distincness")+ xlab("Remove %")+
