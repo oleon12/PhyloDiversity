@@ -1,5 +1,5 @@
 # Load libraries
-
+library(vegan)
 library(maptools)
 library(RColorBrewer)
 library(classInt)
@@ -10,13 +10,14 @@ library(dismo)
 ## Go to the work directory where are the shape poly 
 setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Distribution/shp/Grid/")
 # Read the shape file
-grid <- readShapePoly("grid_1g.shp")
+grid <- readShapePoly("grid_50g.shp")
 #
 # Now, go to the directory where are the index results
 setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
 # Read the results depending on the cell size
-x <- read.csv("DT.grid1",header=T)
+x <- read.csv("DT.grid50",header=T)
 # Extract the index values
+area <- x$area 
 x <- x$W
 # Check the values
 x
@@ -46,9 +47,75 @@ class
 # Now, the hard part...
 # 
 
- vegdist()
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/")
+
+rawGrid <- read.csv("grid_50g.dist.matrix",header = T)
+
+sp <- rawGrid$especie
+
+rawGrid <- rawGrid[,-1]
+rownames(rawGrid) <- sp
+
+rawGrid <- t(rawGrid)
+
+out.cells <- c()
+
+sp.len <- length(rawGrid[1,])
+
+for(i in 1:length(rownames(rawGrid))){
+  
+  len.c <- length(grep(0,rawGrid[i,]))
+  
+  if(len.c==sp.len){
+    
+    out.cells <- c(out.cells,rownames(rawGrid)[i])
+    
+  }
+  
+}
+
+
+rawGrid <- rawGrid[-which(rownames(rawGrid)%in%out.cells),]
+
+dist2 <- as.matrix(vegdist(rawGrid,method = 'jaccard',binary = T,na.rm = T))
+
+dist2 <- dist2[which(rownames(dist2)%in%area[grep("Q5",class)]), ]
+
+brks2 <- c(0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1)
+
+for(i in 1:length(rownames(dist2))){
+  
+  class.v <- findInterval(dist2[i,], brks2, all.inside = T)
+  
+  dist2[i, ] <- class.v
+}
+
+dist2
+
+CI.cells <- c()
+
+l2 <- length(dist2[,1])
+
+for (i in 1:length(colnames(dist2))){
+  
+  l1 <- length(grep(10,dist2[ ,i]))
+  
+  if(l1==l2){
+    CI.cells <- c(CI.cells,colnames(dist2)[i])
+  }
+  
+}
+
+dist.final <- dist2[,which(colnames(dist2)%in%CI.cells)]
+
+class[which(area%in%colnames(dist.final))]
+
+class[which(area%in%colnames(dist.final))] <- "CI.1"
+
+class
+
 grid$Index <- class
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
 
-writePolyShape(grid,fn = "Grid50_PD")
+writePolyShape(grid,fn = "Grid50_TD")
