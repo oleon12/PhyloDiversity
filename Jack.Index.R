@@ -39,11 +39,11 @@ library(SDMTools)
 
 
 # Set working directory.
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Squamata/Results/Feb12/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Trees/")
 
 # Read the directory.
 dir.tree <- dir()[grep("_tree",dir())]
-dir.tree <- dir.tree[-grep("~",dir.tree)]
+#dir.tree <- dir.tree[-grep("~",dir.tree)]
 
 # Creat a empty list where we will put the trees.
 multi.phylo <- list()
@@ -56,7 +56,7 @@ for (i in 1:length(dir.tree)){
 
 # Create a multidata with the ocurrences files created before.
 
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Squamata/Results/Feb12/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Julio1/")
 dir.data <-(dir()[grep(".matrix",dir())])
 dir.data <- dir.data[-grep(".matrix~",dir.data)]
 
@@ -70,7 +70,7 @@ for(i in 1:length(dir.data)){
 names(multi.data) <- dir.data
 head(multi.data$Area.dist.matrix,5L)
 
-multi.data[[5]]$Yurubí <- rep(0, length(multi.data[[5]]$Yurubí))
+#multi.data[[5]]$Yurubí <- rep(0, length(multi.data[[5]]$Yurubí))
 
 ########################################################################
 
@@ -87,7 +87,7 @@ for (i in 1:length(multi.phylo)){
   
   tax <- multi.phylo[[i]]$tip.label
   dead.pool <- c(dead.pool,tax)
-
+  
 }
 
 # All species from phylogenies
@@ -128,7 +128,7 @@ for (i in 1:length(multi.phylo)){
       # Now replace the species column with the sp vector created before
       dist$especie <- sp
     }
-  
+    
     # First, extract colnames and species in different vectors.
     sp.dist0 <- dist$especie
     areas0 <- colnames(dist)
@@ -184,7 +184,7 @@ for (i in 1:length(multi.phylo)){
       avtd.origin[[j]][is.na(avtd.origin[[j]])] <- 0
       
       avtd.origin[[j]] <- avtd.origin[[j]] + avdt2}
-  
+    
   }
 }
 
@@ -196,19 +196,31 @@ pd.jack <- list()
 avdt.jack <- list()
 
 
-## Jacknife calculation
+area.jack <- matrix(0, nrow = length(dt.origin[[1]]$area),ncol = 100)
+grid1.jack <- matrix(0, nrow = length(dt.origin[[2]]$area),ncol = 100)
+grid25.jack <- matrix(0, nrow = length(dt.origin[[3]]$area),ncol = 100)
+grid50.jack <- matrix(0, nrow = length(dt.origin[[4]]$area),ncol = 100)
+pnn.jack <- matrix(0, nrow = length(dt.origin[[5]]$area),ncol = 100)
 
-for (ii in 1:100){
+jackTD.check <- list(area.jack, grid1.jack, grid25.jack, grid50.jack, pnn.jack)
+
+## Jacknife calculation
+for (ii in 1:5){
   ## Resampling from the species distribution
   ## 25% of species will resample
-  rem.samp <- match.sp[sample(x = 1:length(match.sp), size = 0.25*length(match.sp))]
+  rem.samp <- match.sp[sample(x = 1:length(match.sp), size = round(0.25*length(match.sp),digits = 0))]
   print(paste("Iteration",ii,sep = ":"))
   
   for (i in 1:length(multi.phylo)){
     # And for each distribution data
     for(j in 1:length(multi.data)){
+      
+      dist1 <- multi.data[[j]]
+      
+      dist1[which(dist1$especie%in%rem.samp),2:length(colnames(dist1))] <- 0
+      
       # Both data have the same species ? Extrac from the data distribution only the species shared with the phylogeny
-      dist<- multi.data[[j]][which((multi.data[[j]]$especie%in%multi.phylo[[i]]$tip.label)==T),]
+      dist<- dist1[which((dist1$especie%in%multi.phylo[[i]]$tip.label)==T),]
       # Sometimes after the below process are more species in the phylogeny than the distribution data
       if(length(dist$especie)<length(multi.phylo[[i]]$tip.label)){
         # Extrac from the phylogeny the specie that miss in the data distribution
@@ -226,9 +238,10 @@ for (ii in 1:100){
         dist$especie <- sp
       }
       
+      
       ## Remove species
       
-      dist[which(dist$especie%in%rem.samp),2:length(colnames(dist))] <- 0
+      #dist[which(dist$especie%in%rem.samp),2:length(colnames(dist))] <- 0
       
       # First, extract colnames and species in different vectors.
       sp.dist0 <- dist$especie
@@ -290,12 +303,17 @@ for (ii in 1:100){
   }
   
   for(xx in 1:length(dt.origin)){
-    if(dt.jack[[xx]]$I==dt.origin[[xx]]$I){dt.match[[xx]][ii] <- 1; print("Equal")}else{dt.match[[xx]][ii] <- 0; print("Non-equal")}
+     
+    jackTD.check[[xx]][,ii] <- dt.jack[[xx]]$W 
+    
+    if(dt.jack[[xx]]$W==dt.origin[[1]]$W){dt.match[[xx]][ii] <- 1; print("Equal")}else{dt.match[[xx]][ii] <- 0; print("Non-equal")}
     if(pd.jack[[xx]]$PD==pd.origin[[xx]]$PD){pd.match[[xx]][ii] <- 1; print("Equal")}else{pd.match[[xx]][ii] <- 0; print("Non-equal")}
     if(avdt.jack[[xx]]$Dplus==avtd.origin[[xx]]$Dplus){avtd.match[[xx]][ii] <- 1; print("Equal")}else{avtd.match[[xx]][ii] <- 0; print("Non-equal")}
   }
   
 }
+
+jackTD.check[[1]]
 
 r.support <- matrix(0, nrow = length(dt.match), ncol = 3)
 
@@ -303,9 +321,9 @@ colnames(r.support) <- c("DT","PD","AvDT")
 rownames(r.support) <- names(multi.data)
 
 for(k in 1:length(rownames(r.support))){
-
+  
   r.support[k,] <- c(length(which((dt.match[[k]]==1)==T))/100,length(which((dt.match[[k]]==1)==T))/100,length(which((dt.match[[1]]==1)==T))/100) 
-
+  
 }
 
 r.support
