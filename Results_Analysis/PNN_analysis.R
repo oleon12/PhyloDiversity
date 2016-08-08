@@ -1,4 +1,6 @@
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/Raw_IndexR/")
+library(ggplot2)
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
 
 PNN <- data.frame(Area=read.csv("DT.PNN")$area,
                   TD=read.csv("DT.PNN")$W,
@@ -94,7 +96,7 @@ PNN.avtd
 
 
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
 
 write.table(PNN.td,
             file = "TD_PNN.r",
@@ -107,3 +109,181 @@ write.table(PNN.pd,
 write.table(PNN.avtd,
             file = "AvTD_PNN.r",
             col.names = T, row.names = T, quote = F, sep = ",")
+
+####################################################################################
+####################################################################################
+
+PNN2 <- PNN[-c(118,119,120), ]
+
+PNN2.zeroTD <- length(which(PNN2$TD==0))
+PNN2.zeroPD <- length(which(PNN2$PD==0))
+PNN2.zeroAvTD <- length(which(PNN2$AvTD==0))
+
+
+(PNN2.zeroTD/length(PNN2$Area))*100
+(PNN2.zeroPD/length(PNN2$Area))*100
+(PNN2.zeroAvTD/length(PNN2$Area))*100
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/")
+
+PNN.tr0 <- read.csv("PNN.dist.matrix",header = T)
+
+PNN.tr1 <- PNN.tr0[,-1]
+
+PNN.sumTR <- as.matrix(apply(PNN.tr1, 2, sum))
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+
+PNNTD <- read.csv("DT.PNN", header = T)
+PNNTD <- as.data.frame(cbind(PNNTD,PNN.sumTR))
+PNNTD <- PNNTD[-c(118,119,120),]
+PNNTD <- PNNTD[-grep(0, PNNTD$W),]
+PNNTD <- PNNTD[order(PNNTD$W, decreasing = T),]
+
+h <- sqrt(length(PNNTD$W))
+
+k <- diff(range(PNNTD$W))/h
+
+ggplot()+geom_histogram(aes(PNNTD$W), bins = k, binwidth = h)
+
+ggplot()+geom_point(aes(x=PNNTD$rich,y=PNNTD$W))+xlab("Phylo-Richness")+xlab("W index")
+
+cor.test(PNNTD$rich,PNNTD$W, method = 'spearman')$estimate
+
+ggplot()+geom_point(aes(x=PNNTD$PNN.sumTR,y=PNNTD$W))+xlab("Total-Richness")+xlab("W index")
+
+cor.test(PNNTD$PNN.sumTR,PNNTD$W, method = 'spearman')$estimate
+
+png("PNN_DT2.png",width = 3000,height = 1240)
+
+ggplot() + geom_point(aes(x=1:length(PNNTD$area),y=PNNTD$W))+
+  xlab("NNP")+ylab("W index")+
+  geom_point(aes(x=1:length(PNNTD$area),y=PNNTD$rich),colour="red")
+  #annotate("text", label = PNNTD$area, y = (PNNTD$W)+0.001, 
+#           x = 1:length(PNNTD$area), size = 12, colour = "black",angle=0)
+
+dev.off()
+#####################################################################
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+
+PNNPD <- read.csv("PD.PNN", header = T)
+PNNPD <- as.data.frame(cbind(PNNPD,PNN.sumTR))
+PNNPD <- PNNPD[-c(118,119,120),]
+PNNPD <- PNNPD[-grep(0, PNNPD$PD),]
+PNNPD <- PNNPD[order(PNNPD$PD, decreasing = T),]
+
+h <- sqrt(length(PNNPD$PD))
+
+k <- diff(range(PNNPD$PD))/h
+
+ggplot()+geom_histogram(aes(PNNPD$PD), bins = k, binwidth = h)
+
+ggplot()+geom_point(aes(x=PNNPD$SR,y=PNNPD$PD))+xlab("Phylo-Richness")+xlab("PD index")
+
+cor.test(PNNPD$SR,PNNPD$PD, method = 'spearman')$estimate
+
+ggplot()+geom_point(aes(x=PNNPD$PNN.sumTR,y=PNNPD$PD))+xlab("Total-Richness")+xlab("PD index")
+
+cor.test(PNNPD$PNN.sumTR,PNNPD$PD, method = 'spearman')$estimate
+
+png("PNN_PD2.png",width = 3000,height = 1240)
+
+ggplot() + geom_point(aes(x=1:length(PNNPD$PD),y=PNNPD$PD))+
+  xlab("NNP")+ylab("PD index")+
+  geom_point(aes(x=1:length(PNNPD$PD),y=PNNPD$SR),colour="red")
+#annotate("text", label = PNNTD$area, y = (PNNTD$W)+0.001, 
+#           x = 1:length(PNNTD$area), size = 12, colour = "black",angle=0)
+
+dev.off()
+#####################################################################
+
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+
+PNNAvTD <- read.csv("AvTD.PNN", header = T)
+PNNAvTD <- as.data.frame(cbind(PNNAvTD,PNN.sumTR))
+PNNAvTD <- PNNAvTD[-c(118,119,120),]
+PNNAvTD <- PNNAvTD[-grep(0, PNNAvTD$Dplus),]
+PNNAvTD <- PNNAvTD[order(PNNAvTD$Dplus, decreasing = T),]
+
+h <- sqrt(length(PNNAvTD$Dplus))
+
+k <- diff(range(PNNAvTD$Dplus))/h
+
+ggplot()+geom_histogram(aes(PNNAvTD$Dplus), bins = k, binwidth = h)
+
+ggplot()+geom_point(aes(x=PNNAvTD$Species,y=PNNAvTD$Dplus))+xlab("Phylo-Richness")+ylab("AvTD index")
+
+cor.test(PNNAvTD$Species,PNNAvTD$Dplus, method = 'spearman')$estimate
+
+ggplot()+geom_point(aes(x=PNNAvTD$PNN.sumTR,y=PNNAvTD$Dplus))+xlab("Total-Richness")+ylab("AvTD index")
+
+cor.test(PNNAvTD$PNN.sumTR,PNNAvTD$Dplus, method = 'spearman')$estimate
+
+png("PNN_AvDT2.png",width = 3000,height = 1240)
+
+ggplot() + geom_point(aes(x=1:length(PNNAvTD$Species),y=PNNAvTD$Dplus))+
+  xlab("NNP")+ylab("AvTD index")+
+  geom_point(aes(x=1:length(PNNAvTD$Species),y=log(PNNAvTD$Species)),colour="red")
+#annotate("text", label = PNNTD$area, y = (PNNTD$W)+0.001, 
+#           x = 1:length(PNNTD$area), size = 12, colour = "black",angle=0)
+
+dev.off()
+#####################################################################
+
+Areas <- cbind(as.character(PNNTD$area),rownames(PNNPD), rownames(PNNAvTD))
+Areas <- Areas[1:length(rownames(PNNAvTD)), ]
+colnames(Areas) <- c("TD", "PD", "AvTD")
+Areas <- as.data.frame(Areas)
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/")
+
+GI <- read.csv("General.info", header = T)
+match.sp <- read.csv("Match.sp")
+
+PNN.m <- PNN.tr0[which(PNN.tr0$especie%in%GI$Sp), ]
+
+for(i in 2:length(PNN.m$especie)){
+  
+  bl <- GI$BL[grep(PNN.m$especie[i],GI$Sp)]
+
+  if(length(bl)>1){
+    bl <- sum(bl)/length(bl)
+  }
+  
+  PNN.m[i,grep(1,PNN.m[i,])] <- bl
+    
+}
+
+PNN.m <- PNN.m[,-1]
+
+BL.total <- as.matrix(apply(PNN.m, 2, sum))
+
+BL <- matrix(NA, nrow = length(Areas$TD), ncol = 3)
+  
+for(i in 1:length(colnames(Areas))){
+  
+  for (j in 1:length(Areas$TD)) {
+    
+    bls <- BL.total[grep(Areas[j,i],rownames(BL.total))]
+    if(length(bls)>1){ bls <- bls[1]}
+    BL[j,i] <- bls
+  }
+  
+}  
+
+colnames(BL) <- c("BL_TD","BL_PD","BL_AvTD")
+BL <- as.data.frame(BL)
+
+Areas.f <- as.data.frame(cbind(as.character(Areas$TD),as.character(BL$BL_TD),
+                               as.character(Areas$PD),as.character(BL$BL_PD),
+                               as.character(Areas$AvTD),as.character(BL$BL_AvTD)))
+
+colnames(Areas.f) <- c("TD","BL","PD","BL","AvTD","BL")
+
+Areas.f
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+
+write.table(Areas.f, "PNN_Class.table",quote = F, col.names = T, row.names = F)
