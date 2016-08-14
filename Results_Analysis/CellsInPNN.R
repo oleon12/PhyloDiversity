@@ -14,6 +14,7 @@ setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
 # Read the shape file
 grid <- readShapePoly("Grid25_PD.shp")
 pos.Q5 <- grep("Q5", grid$Index)
+pos.Q5 <- pos.Q5+1
 #
 setwd("~/Documentos/Omar/Tesis/Scripts/Distribution/shp/Grid/")
 grid2 <- read.shp("grid_25g.shp")
