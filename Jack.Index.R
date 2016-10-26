@@ -21,6 +21,17 @@
 # Also, the remotion percetange could be change modifying the default value (0.25) in the variable rem.samp at the beginning of the first loop for.
 # The script returns a matrix with Jackknife support value of the index for each distibution matrix. 
 
+toNum <-function(x){
+ out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
+ for (i in 1:length(colnames(x))){
+   out[,i] <- as.numeric(x[,i])
+ }
+ colnames(out) <- colnames(x)
+ rownames(out) <- rownames(x)
+ 
+ return(out)
+}
+
 ## Load libraries.
 
 library(rgeos)
@@ -137,6 +148,13 @@ for (i in 1:length(multi.phylo)){
     # The transpose is necessary for PD function.
     dist2<- dist[,-1]
     dist2 <- t(dist2)
+    
+    if (is.numeric(dist2[1,1])==F){
+      
+      dist2 <- toNum(dist2)
+      
+    }
+    
     # Put the species' names as column names
     colnames(dist2) <- sp 
     
@@ -251,6 +269,14 @@ for (ii in 1:5){
       # The transpose is necessary for PD function.
       dist2<- dist[,-1]
       dist2 <- t(dist2)
+      
+      if (is.numeric(dist2[1,1])==F){
+      
+        dist2 <- toNum(dist2)
+      
+      }
+    
+      
       # Put the species' names as column names
       colnames(dist2) <- sp 
       
