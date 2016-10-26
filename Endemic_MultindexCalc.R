@@ -15,6 +15,16 @@
 # The file requiere for this script is a absence/presence matrix. 
 # The outcome file is 3 list corresponding to the three indeces. Each list have (NumberOfMatrices X NumberOfRemove%) slots and each one have ii Index values for each area
 
+toNum <-function(x){
+ out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
+ for (i in 1:length(colnames(x))){
+   out[,i] <- as.numeric(x[,i])
+ }
+ colnames(out) <- colnames(x)
+ rownames(out) <- rownames(x)
+ 
+ return(out)
+}
 
 ## Load libraries.
 
@@ -184,6 +194,13 @@ for(aa in 1:length(perc.rem)){
         # The transpose is necessary for PD function.
         dist2<- dist[,-1]
         dist2 <- t(dist2)
+        
+        if (is.numeric(dist2[1,1])==F){
+      
+         dist2 <- toNum(dist2)
+      
+        }
+    
         # Put the species' names as column names
         colnames(dist2) <- sp 
         
