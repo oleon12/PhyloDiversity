@@ -19,6 +19,17 @@
 # To use this script must change the working directories
 # Two outcomes will generate, first a table with general information about species. Second a 3 list objecc correspond to each phylogenetic diversity index
 
+toNum <-function(x){
+ out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
+ for (i in 1:length(colnames(x))){
+   out[,i] <- as.numeric(x[,i])
+ }
+ colnames(out) <- colnames(x)
+ rownames(out) <- rownames(x)
+ 
+ return(out)
+}
+
 ## Load libraries.
 
 library(rgeos)
@@ -149,6 +160,15 @@ for (i in 1:length(multi.phylo)){
     # The transpose is necessary for PD function.
     dist2<- dist[,-1]
     dist2 <- t(dist2)
+       
+    
+    if (is.numeric(dist2[1,1])==F){
+      
+      dist2 <- toNum(dist2)
+      
+    }
+    
+    
     # Put the species' names as column names
     colnames(dist2) <- sp 
     
