@@ -10,22 +10,22 @@ library(shapefiles)
 library(SDMTools)
 
 ## Go to the work directory where are the shape poly 
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR//")
 # Read the shape file
-grid <- readShapePoly("Grid1_PD.shp")
+grid <- readShapePoly("Grid1_AVTD.shp")
 pos1.Q5 <- grep("Q5", grid$Index)
 pos1.Q5 <- pos1.Q5 + 1
-grid1 <- read.shp("Grid1_PD.shp")
+grid1 <- read.shp("Grid1_AVTD.shp")
 #
-grid <- readShapePoly("Grid50_PD.shp")
+grid <- readShapePoly("Grid50_AVTD.shp")
 pos50.Q5 <- grep("Q5", grid$Index)
 pos50.Q5 <- pos50.Q5 + 1
-grid50 <- read.shp("Grid50_PD.shp")
+grid50 <- read.shp("Grid50_AVTD.shp")
 #
-grid <- readShapePoly("Grid25_PD.shp")
+grid <- readShapePoly("Grid25_AVTD.shp")
 pos25.Q5 <- grep("Q5", grid$Index)
 pos25.Q5 <- pos25.Q5 + 1
-grid25 <- read.shp("Grid25_PD.shp")
+grid25 <- read.shp("Grid25_AVTD.shp")
 #
 
 g25.50 <- c()
@@ -103,3 +103,7 @@ rownames(comparison) <- "Percentage"
 comparison <- as.data.frame(comparison)
 
 comparison
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/")
+
+write.csv(comparison, "AvTD_SensibilityAnalysis", quote = F, row.names =T ,col.names = T)
