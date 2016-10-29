@@ -22,14 +22,14 @@
 # The script returns a matrix with Jackknife support value of the index for each distibution matrix. 
 
 toNum <-function(x){
- out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
- for (i in 1:length(colnames(x))){
-   out[,i] <- as.numeric(x[,i])
- }
- colnames(out) <- colnames(x)
- rownames(out) <- rownames(x)
- 
- return(out)
+  out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
+  for (i in 1:length(colnames(x))){
+    out[,i] <- as.numeric(x[,i])
+  }
+  colnames(out) <- colnames(x)
+  rownames(out) <- rownames(x)
+  
+  return(out)
 }
 
 ## Load libraries.
@@ -50,7 +50,7 @@ library(SDMTools)
 
 
 # Set working directory.
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Trees/")
+setwd("~/Documentos/Omar/Result_TesisOmar/Trees/")
 
 # Read the directory.
 dir.tree <- dir()[grep("_tree",dir())]
@@ -67,9 +67,9 @@ for (i in 1:length(dir.tree)){
 
 # Create a multidata with the ocurrences files created before.
 
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Julio1/")
+setwd("~/Documentos/Omar/Result_TesisOmar/Final/")
 dir.data <-(dir()[grep(".matrix",dir())])
-dir.data <- dir.data[-grep(".matrix~",dir.data)]
+#dir.data <- dir.data[-grep(".matrix~",dir.data)]
 
 multi.data <- list()
 
@@ -107,11 +107,7 @@ dead.pool
 # Find the phylogeny species that match with the distribution species
 match.sp <- dead.pool[which(dead.pool%in%multi.data[[1]]$especie)]
 match.sp
-## Create three empty list where the success will put
 
-dt.match <- as.list(rep(NA,length(multi.data)))
-pd.match <- as.list(rep(NA,length(multi.data)))
-avtd.match <- as.list(rep(NA,length(multi.data)))
 
 ## Create empty lists for the original data results
 dt.origin <- list()
@@ -221,15 +217,20 @@ grid50.jack <- matrix(0, nrow = length(dt.origin[[4]]$area),ncol = 100)
 pnn.jack <- matrix(0, nrow = length(dt.origin[[5]]$area),ncol = 100)
 
 jackTD.check <- list(area.jack, grid1.jack, grid25.jack, grid50.jack, pnn.jack)
+jackPD.check <- list(area.jack, grid1.jack, grid25.jack, grid50.jack, pnn.jack)
+jackAVTD.check <- list(area.jack, grid1.jack, grid25.jack, grid50.jack, pnn.jack)
 
 ## Jacknife calculation
-for (ii in 1:5){
+for (ii in 1:100){
   ## Resampling from the species distribution
   ## 25% of species will resample
   rem.samp <- match.sp[sample(x = 1:length(match.sp), size = round(0.25*length(match.sp),digits = 0))]
   print(paste("Iteration",ii,sep = ":"))
   
   for (i in 1:length(multi.phylo)){
+    
+    print(paste(paste("Phylogeny No",i,sep = ": "), paste("From", length(multi.phylo), sep=": "), sep = " "  ))
+    
     # And for each distribution data
     for(j in 1:length(multi.data)){
       
@@ -271,11 +272,11 @@ for (ii in 1:5){
       dist2 <- t(dist2)
       
       if (is.numeric(dist2[1,1])==F){
-      
+        
         dist2 <- toNum(dist2)
-      
+        
       }
-    
+      
       
       # Put the species' names as column names
       colnames(dist2) <- sp 
@@ -329,17 +330,91 @@ for (ii in 1:5){
   }
   
   for(xx in 1:length(dt.origin)){
-     
-    jackTD.check[[xx]][,ii] <- dt.jack[[xx]]$W 
     
-    if(dt.jack[[xx]]$W==dt.origin[[1]]$W){dt.match[[xx]][ii] <- 1; print("Equal")}else{dt.match[[xx]][ii] <- 0; print("Non-equal")}
-    if(pd.jack[[xx]]$PD==pd.origin[[xx]]$PD){pd.match[[xx]][ii] <- 1; print("Equal")}else{pd.match[[xx]][ii] <- 0; print("Non-equal")}
-    if(avdt.jack[[xx]]$Dplus==avtd.origin[[xx]]$Dplus){avtd.match[[xx]][ii] <- 1; print("Equal")}else{avtd.match[[xx]][ii] <- 0; print("Non-equal")}
+    jackTD.check[[xx]][ ,ii] <- dt.jack[[xx]]$area[order(dt.jack[[xx]]$W, decreasing = T)]
+    
+    jackPD.check[[xx]][ ,ii] <- rownames(pd.jack[[xx]])[order(pd.jack[[xx]]$PD, decreasing = T)]
+    
+    jackAVTD.check[[xx]][ ,ii] <- rownames(avdt.jack[[xx]])[order(avdt.jack[[xx]]$Dplus, decreasing = T)]
+    
+    
   }
   
 }
 
+
 jackTD.check[[1]]
+
+jackPD.check[[1]]
+
+jackAVTD.check[[1]]
+
+
+ii <- 1
+xx <- 1
+
+## Create three empty list where the success will put
+
+dt.match <- as.list(rep(0,length(multi.data)))
+pd.match <- as.list(rep(0,length(multi.data)))
+avtd.match <- as.list(rep(0,length(multi.data)))
+
+
+for(ii in 1:length(dt.origin)){
+  
+  for(xx in 1:length(jackAVTD.check[[1]][1,])){
+    
+    RankOriginTD <- dt.origin[[ii]]$area[order(dt.origin[[ii]]$W, decreasing = T)] 
+    RankOriginPD <- rownames(pd.origin[[ii]])[order(pd.origin[[ii]]$PD, decreasing = T)]
+    RankOriginAVTD <- rownames(avtd.origin[[ii]])[order(avtd.origin[[ii]]$Dplus, decreasing = T)]
+    
+    JackRankTD <- jackTD.check[[ii]][,xx]
+    JackRankPD <- jackPD.check[[ii]][,xx]
+    JackRankAVTD <- jackAVTD.check[[ii]][,xx]
+    
+    if(ii==1){
+      
+      c1 <- length(which((RankOriginTD==JackRankTD)==T))
+      if(c1==length(RankOriginTD)){dt.match[[ii]][xx] <- 1}
+      
+      c2 <- length(which((RankOriginPD==JackRankPD)==T))
+      if(c2==length(RankOriginPD)){pd.match[[ii]][xx] <- 1}
+      
+      c3 <- length(which((RankOriginAVTD==JackRankAVTD)==T))
+      if(c3==length(RankOriginAVTD)){avtd.match[[ii]][xx] <- 1}
+    
+    }
+    
+    if(ii==5){
+      
+      c1 <- length(which((RankOriginTD[1:5]==JackRankTD[1:5])==T))
+      if(c1==length(RankOriginTD[1:5])){dt.match[[ii]][xx] <- 1}
+      
+      c2 <- length(which((RankOriginPD[1:5]==JackRankPD[1:5])==T))
+      if(c2==length(RankOriginPD[1:5])){pd.match[[ii]][xx] <- 1}
+      
+      c3 <- length(which((RankOriginAVTD[1:5]==JackRankAVTD[1:5])==T))
+      if(c3==length(RankOriginAVTD[1:5])){avtd.match[[ii]][xx] <- 1}
+      
+    }else{
+      
+      c1 <- length(which((RankOriginTD[1:2]==JackRankTD[1:2])==T))
+      if(c1==length(RankOriginTD[1:2])){dt.match[[ii]][xx] <- 1}
+      
+      c2 <- length(which((RankOriginPD[1:2]==JackRankPD[1:2])==T))
+      if(c2==length(RankOriginPD[1:2])){pd.match[[ii]][xx] <- 1}
+      
+      c3 <- length(which((RankOriginAVTD[1:2]==JackRankAVTD[1:2])==T))
+      if(c3==length(RankOriginAVTD[1:2])){avtd.match[[ii]][xx] <- 1}
+      
+      
+    }
+    
+    
+  }
+  
+}
+
 
 r.support <- matrix(0, nrow = length(dt.match), ncol = 3)
 
@@ -348,8 +423,10 @@ rownames(r.support) <- names(multi.data)
 
 for(k in 1:length(rownames(r.support))){
   
-  r.support[k,] <- c(length(which((dt.match[[k]]==1)==T))/100,length(which((dt.match[[k]]==1)==T))/100,length(which((dt.match[[1]]==1)==T))/100) 
+  r.support[k,] <- c(length(which((dt.match[[k]]==1)==T))/100,length(which((pd.match[[k]]==1)==T))/100,length(which((avtd.match[[1]]==1)==T))/100) 
   
 }
 
 r.support
+
+write.csv(r.support,"Soporte.Jack", quote = F, row.names = T)
