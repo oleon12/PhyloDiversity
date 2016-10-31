@@ -36,7 +36,7 @@
 library(classInt)
 
 ## Set working directory
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/May18/Raw_IndexR/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
 
 ## Create a data frame with index values and cell ID
 index.grid <- data.frame(Cells=read.csv("DT.grid25")$area,
@@ -76,7 +76,7 @@ avtd.imp <- c(grep("5",r1$AVDT),grep("4",r1$AVDT))
 ## Create outcome matrix
 
 r2 <- matrix(NA,nrow = 3, ncol = 3)
-rownames(r2) <- c("DT+PD","DT+AvDT","PD+AvDT")
+rownames(r2) <- c("TD+PD","TD+AvDT","PD+AvDT")
 colnames(r2) <- c("A%","B%","A+B%")
 
 ## DT v PD
@@ -94,5 +94,29 @@ r2[3,3] <- round((length(which(pd.imp%in%avtd.imp))/ (length(pd.imp)+length(avtd
 
 r2
 
-write.table(r2,file = "~/Documentos/Omar/Tesis/Taxa/Results/May18/Raw_IndexR/Index.ShareCells",
+write.table(r2,file = "~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/Index.ShareCells",
+            quote = F, row.names = T, col.names = T)
+
+##########################################################################################3
+
+r3 <- matrix(NA,nrow = 3, ncol = 3)
+rownames(r3) <- c("PD+TD","AvDT+TD","AvDT+PD")
+colnames(r3) <- c("A%","B%","A+B%")
+
+## PD v TD
+r3[1,1] <- round((length(which(pd.imp%in%dt.imp))/ length(pd.imp))*100,digits = 2)# NoShared/TotalDT 
+r3[1,2] <- round((length(which(pd.imp%in%dt.imp))/ length(dt.imp))*100,digits = 2)# NoShared/TotalPD
+r3[1,3] <- round((length(which(pd.imp%in%dt.imp))/ (length(dt.imp)+length(pd.imp)))*100,digits = 2)# NoShared/Total(DT+PD)
+# AvTD v TD
+r3[2,1] <- round((length(which(avtd.imp%in%dt.imp))/ length(avtd.imp))*100,digits = 2)# NoShared/TotalDT 
+r3[2,2] <- round((length(which(avtd.imp%in%dt.imp))/ length(dt.imp))*100,digits = 2)# NoShared/TotalAvTD
+r3[2,3] <- round((length(which(avtd.imp%in%dt.imp))/ (length(dt.imp)+length(avtd.imp)))*100,digits = 2)
+# AvTD v PD
+r3[3,1] <- round((length(which(avtd.imp%in%pd.imp))/ length(avtd.imp))*100,digits = 2)# NoShared/TotalPD
+r3[3,2] <- round((length(which(avtd.imp%in%pd.imp))/ length(pd.imp))*100,digits = 2)# NoShared/TotalAvTD
+r3[3,3] <- round((length(which(avtd.imp%in%pd.imp))/ (length(pd.imp)+length(avtd.imp)))*100,digits = 2)# NoShared/Total(PD+AvTD)
+
+r3
+
+write.table(r3,file = "~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/Index2.ShareCells",
             quote = F, row.names = T, col.names = T)
