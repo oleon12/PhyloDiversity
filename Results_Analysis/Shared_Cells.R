@@ -55,7 +55,10 @@ r1$Cells <- index.grid$Cells ##
 ## Classification
 for(i in 2:length(colnames(index.grid))){
   ## Made the quatiles range
-  brks <- classIntervals(index.grid[,i],n=5,style = "quantile")
+  
+  ind2 <- index.grid[-which(index.grid[,i]==0),i]
+  
+  brks <- classIntervals(ind2,n=5,style = "quantile")
   brks <- brks$brks
   brks
   ## Classification given quantiles intervals.
@@ -120,3 +123,7 @@ r3
 
 write.table(r3,file = "~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/Index2.ShareCells",
             quote = F, row.names = T, col.names = T)
+
+
+r2
+r3
