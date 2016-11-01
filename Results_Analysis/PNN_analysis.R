@@ -1,6 +1,6 @@
 library(ggplot2)
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
 
 PNN <- data.frame(Area=read.csv("DT.PNN")$area,
                   TD=read.csv("DT.PNN")$W,
@@ -72,7 +72,7 @@ PNN.pd
 
 PNNin <- PNN$AvTD[grep("PNNin",PNN$Area)]
 PNN1 <- sum(PNN$AvTD[1:117])
-PNNNAB <- (PNN$AvTD[grep("NABin",PNN$Area)] - PNN$AvTD[grep("PNNout",PNN$Area)])*-1 
+PNNNAB <- (PNN$AvTD[grep("NABin",PNN$Area)] - PNN$AvTD[grep("PNNout",PNN$Area)]) 
 NAB <- PNN$AvTD[grep("NABin",PNN$Area)]
 
 PNN.avtd <- matrix(0, ncol = 3, nrow = 3)
@@ -96,7 +96,7 @@ PNN.avtd
 
 
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
 
 write.table(PNN.td,
             file = "TD_PNN.r",
@@ -119,12 +119,11 @@ PNN2.zeroTD <- length(which(PNN2$TD==0))
 PNN2.zeroPD <- length(which(PNN2$PD==0))
 PNN2.zeroAvTD <- length(which(PNN2$AvTD==0))
 
-
 (PNN2.zeroTD/length(PNN2$Area))*100
 (PNN2.zeroPD/length(PNN2$Area))*100
 (PNN2.zeroAvTD/length(PNN2$Area))*100
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/")
 
 PNN.tr0 <- read.csv("PNN.dist.matrix",header = T)
 
@@ -132,12 +131,12 @@ PNN.tr1 <- PNN.tr0[,-1]
 
 PNN.sumTR <- as.matrix(apply(PNN.tr1, 2, sum))
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
 
 PNNTD <- read.csv("DT.PNN", header = T)
 PNNTD <- as.data.frame(cbind(PNNTD,PNN.sumTR))
 PNNTD <- PNNTD[-c(118,119,120),]
-PNNTD <- PNNTD[-grep(0, PNNTD$W),]
+PNNTD <- PNNTD[-which(PNNTD$W==0),]
 PNNTD <- PNNTD[order(PNNTD$W, decreasing = T),]
 
 h <- sqrt(length(PNNTD$W))
@@ -146,7 +145,7 @@ k <- diff(range(PNNTD$W))/h
 
 ggplot()+geom_histogram(aes(PNNTD$W), bins = k, binwidth = h)
 
-ggplot()+geom_point(aes(x=PNNTD$rich,y=PNNTD$W))+xlab("Phylo-Richness")+xlab("W index")
+ggplot()+geom_point(aes(x=PNNTD$rich,y=PNNTD$W))+xlab("Phylo-Richness")+ylab("W index")
 
 cor.test(PNNTD$rich,PNNTD$W, method = 'spearman')$estimate
 
@@ -159,19 +158,19 @@ png("PNN_DT2.png",width = 3000,height = 1240)
 ggplot() + geom_point(aes(x=1:length(PNNTD$area),y=PNNTD$W))+
   xlab("NNP")+ylab("W index")+
   geom_point(aes(x=1:length(PNNTD$area),y=PNNTD$rich),colour="red")
-  #annotate("text", label = PNNTD$area, y = (PNNTD$W)+0.001, 
+#annotate("text", label = PNNTD$area, y = (PNNTD$W)+0.001, 
 #           x = 1:length(PNNTD$area), size = 12, colour = "black",angle=0)
 
 dev.off()
 #####################################################################
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
 
-PNNPD <- read.csv("PD.PNN", header = T)
-PNNPD <- as.data.frame(cbind(PNNPD,PNN.sumTR))
-PNNPD <- PNNPD[-c(118,119,120),]
-PNNPD <- PNNPD[-grep(0, PNNPD$PD),]
-PNNPD <- PNNPD[order(PNNPD$PD, decreasing = T),]
+PNNPD <- read.csv("PD.PNN", header = T) ## Read the PD values
+PNNPD <- as.data.frame(cbind(PNNPD,PNN.sumTR)) # Combine PD matrix with Total Richness
+PNNPD <- PNNPD[-c(118,119,120),] # Remove the NABin, PNNin and PNNout
+PNNPD <- PNNPD[-which(PNNPD$PD==0),] # Remove PNN with PD value == 0
+PNNPD <- PNNPD[order(PNNPD$PD, decreasing = T),] # Order the matrix in decreasing order
 
 h <- sqrt(length(PNNPD$PD))
 
@@ -199,12 +198,12 @@ dev.off()
 #####################################################################
 
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
 
 PNNAvTD <- read.csv("AvTD.PNN", header = T)
 PNNAvTD <- as.data.frame(cbind(PNNAvTD,PNN.sumTR))
 PNNAvTD <- PNNAvTD[-c(118,119,120),]
-PNNAvTD <- PNNAvTD[-grep(0, PNNAvTD$Dplus),]
+PNNAvTD <- PNNAvTD[-which(PNNAvTD$Dplus==0),]
 PNNAvTD <- PNNAvTD[order(PNNAvTD$Dplus, decreasing = T),]
 
 h <- sqrt(length(PNNAvTD$Dplus))
@@ -223,9 +222,9 @@ cor.test(PNNAvTD$PNN.sumTR,PNNAvTD$Dplus, method = 'spearman')$estimate
 
 png("PNN_AvDT2.png",width = 3000,height = 1240)
 
-ggplot() + geom_point(aes(x=1:length(PNNAvTD$Species),y=PNNAvTD$Dplus))+
+ggplot() + geom_point(aes(x=1:length(PNNAvTD$Species),y=log(PNNAvTD$Dplus)))+
   xlab("NNP")+ylab("AvTD index")+
-  geom_point(aes(x=1:length(PNNAvTD$Species),y=log(PNNAvTD$Species)),colour="red")
+  geom_point(aes(x=1:length(PNNAvTD$Species),y=PNNAvTD$Species),colour="red")
 #annotate("text", label = PNNTD$area, y = (PNNTD$W)+0.001, 
 #           x = 1:length(PNNTD$area), size = 12, colour = "black",angle=0)
 
@@ -237,7 +236,7 @@ Areas <- Areas[1:length(rownames(PNNAvTD)), ]
 colnames(Areas) <- c("TD", "PD", "AvTD")
 Areas <- as.data.frame(Areas)
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/")
 
 GI <- read.csv("General.info", header = T)
 match.sp <- read.csv("Match.sp")
@@ -247,13 +246,13 @@ PNN.m <- PNN.tr0[which(PNN.tr0$especie%in%GI$Sp), ]
 for(i in 2:length(PNN.m$especie)){
   
   bl <- GI$BL[grep(PNN.m$especie[i],GI$Sp)]
-
+  
   if(length(bl)>1){
     bl <- sum(bl)/length(bl)
   }
   
   PNN.m[i,grep(1,PNN.m[i,])] <- bl
-    
+  
 }
 
 PNN.m <- PNN.m[,-1]
@@ -261,7 +260,7 @@ PNN.m <- PNN.m[,-1]
 BL.total <- as.matrix(apply(PNN.m, 2, sum))
 
 BL <- matrix(NA, nrow = length(Areas$TD), ncol = 3)
-  
+
 for(i in 1:length(colnames(Areas))){
   
   for (j in 1:length(Areas$TD)) {
