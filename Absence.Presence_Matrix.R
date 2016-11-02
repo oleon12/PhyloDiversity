@@ -123,14 +123,9 @@ write.table(data.grid,file="grid_25g.dist.matrix",row.names=T, col.names=T,quote
 
 # Read the PNN shp file from his respective directory.
 
-setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Distribution/shp/PNN/")
-dir <- dir()[grep(".shp",dir())]
-PNN <- list()
-
-for(i in 1:length(dir)){
-  PNN[[i]] <- read.shp(shp.name = dir[i])
-}
-
+setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Distribution/shp/NAB/")
+PNN <- read.shp("PNN2_NAB.shp")
+PNN2 <- readShapePoly("PNN2_NAB.shp")
 
 setwd("~/Documentos/Omar/Tesis/Scripts/Distribution/shp/NAB/")
 NAB <- read.shp("NAB_GBIF.shp")
@@ -138,8 +133,8 @@ NAB <- read.shp("NAB_GBIF.shp")
 # Create a matrix filled with 0, the rows will be the species and the columns will be the areas.
 # This will be our absece/presence matrix.
 
-data.PNN <- matrix(0, nrow = length(levels(sp.dist$Sp)),ncol = length(PNN))
-colnames(data.PNN) <- dir
+data.PNN <- matrix(0, nrow = length(levels(sp.dist$Sp)),ncol = length(PNN$shp))
+colnames(data.PNN) <- PNN2$ORIG_NAME
 rownames(data.PNN) <- levels(sp.dist$Sp)
 
 ## Now other approach, evaluating only if the species are inside PNNs or not
@@ -156,13 +151,13 @@ PNNout <- rep(0,length(levels(sp.dist$Sp)))
 cl <- makeCluster(8)
 registerDoParallel(cl)
 
-for(i in 1:length(PNN)){
-  print(paste("Calculating...",(length(PNN):1)[i],sep = " "))
+for(i in 1:length(PNN$shp)){
+  print(paste("Calculating...",(length(PNN$shp):1)[i],sep = " "))
   for(j in 1:length(data.PNN[,1])){
     # Extrac only the Lat and Long for a j specie given the data.abpre matrix.
     sp.data <- sp.dist[which(sp.dist$Sp==rownames(data.PNN)[j]),2:3]
     # Compare if at least one georeference point are inside the area polygon.
-    out <- pnt.in.poly(sp.data,PNN[[i]]$shp[[1]]$points)
+    out <- pnt.in.poly(sp.data,PNN$shp[[i]]$points)
     # If a point are inside the area polygon, will fill his respective space with 1.
     if (1%in%out$pip){ 
       
@@ -181,7 +176,7 @@ for(i in 1:length(data.PNN[,1])){
   if(length(ll)>=1){
     
     PNNin[i] <- 1
-  
+    
   }else{
     
     PNNout[i] <- 1
@@ -195,5 +190,5 @@ data.PNN <- cbind(data.PNN,PNNin,PNNout,NABin)
 ########################################################################
 
 # Save the created data.
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/")
 write.table(data.PNN,file="PNN.dist.matrix",row.names=T, col.names=T,quote=F,sep="|")
