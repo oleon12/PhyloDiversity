@@ -20,14 +20,14 @@
 # Two outcomes will generate, first a table with general information about species. Second a 3 list objecc correspond to each phylogenetic diversity index
 
 toNum <-function(x){
- out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
- for (i in 1:length(colnames(x))){
-   out[,i] <- as.numeric(x[,i])
- }
- colnames(out) <- colnames(x)
- rownames(out) <- rownames(x)
- 
- return(out)
+  out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
+  for (i in 1:length(colnames(x))){
+    out[,i] <- as.numeric(x[,i])
+  }
+  colnames(out) <- colnames(x)
+  rownames(out) <- rownames(x)
+  
+  return(out)
 }
 
 ## Load libraries.
@@ -67,7 +67,7 @@ names(multi.phylo) <- dir.tree
 
 # Create a multidata with the ocurrences files created before.
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/")
 dir.data <-(dir()[grep(".matrix",dir())])
 dir.data <- dir.data[-grep(".matrix~",dir.data)]
 
@@ -80,10 +80,7 @@ for(i in 1:length(dir.data)){
 # Set names for each data.
 names(multi.data) <- dir.data
 str(multi.data)
-multi.data$PNN.dist.matrix <- cbind(multi.data$Area.dist.matrix$especie,multi.data$PNN.dist.matrix)
-multi.data$PNN.dist.matrix <- multi.data$PNN.dist.matrix[,-2]
-colnames(multi.data$PNN.dist.matrix)[1] <- "especie"
-str(multi.data$PNN.dist.matrix)
+
 ## Extract the tips from all phylogenies
 ## Those species will be our pool data species, for the permutation
 
@@ -119,6 +116,8 @@ AVDT.grid <- c()
 # Find the phylogeny species that match with the distribution species
 match.sp <- dead.pool[which(dead.pool%in%multi.data[[1]]$especie)]
 match.sp
+
+write.csv(match.sp,"Match.sp", quote = F, row.names = F)
 
 ########################################################################
 
@@ -160,7 +159,7 @@ for (i in 1:length(multi.phylo)){
     # The transpose is necessary for PD function.
     dist2<- dist[,-1]
     dist2 <- t(dist2)
-       
+    
     
     if (is.numeric(dist2[1,1])==F){
       
@@ -179,7 +178,7 @@ for (i in 1:length(multi.phylo)){
     # If is the firs phylogeny, not sum
     if(i == 1){
       dt.origin[[j]] <- Ind
-    # But, if is not the first phylogeny, sum
+      # But, if is not the first phylogeny, sum
     }else{
       # Due to characters object can't be summed, fill its colum with NA
       dt.origin[[j]]$area <- NA
