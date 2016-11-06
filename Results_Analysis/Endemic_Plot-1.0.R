@@ -129,11 +129,18 @@ end <- read.csv("Grid.end",header = T)
 
 class <- readShapePoly("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/Grid25_TD.shp")
 
-q5 <- paste("X",class$SP_ID[grep("Q5",class$Index)],sep="")
-q5 <- which(end$Area%in%q5)
 
-q4 <- paste("X",class$SP_ID[grep("Q4",class$Index)],sep="")
-q4 <- which(end$Area%in%q4)
+ind <- class$Index
+
+ind <- rep(ind,(length(end$Area)/length(unique(end$Area)))
+
+           
+end <- cbind(end,ind)
+           
+
+q5 <- grep("Q5",end$ind)
+
+q4 <- grep("Q4",end$ind)
 
 #brewer.pal.info
 
@@ -183,19 +190,12 @@ p +geom_jitter(aes(x=factor(end$Percentage[q4]),
 dev.off()
 
 
-novoQ <- rep(NA, length(end$Area))
-
-novoQ[q5] <- rep("Q5", length(novoQ[q5]))
-novoQ[q4] <- rep("Q4", length(novoQ[q4]))
-
-end$Area <- as.factor(novoQ)
-
 png(filename = "DT_grid25Q4Q5_end.png",width = 1500,height = 1000)
 
 p <- ggplot()
 p +geom_jitter(aes(x=factor(end$Percentage[c(q5,q4)]),
                    y=end$TD[c(q5,q4)],
-                   colour=end$Area[c(q5,q4)]), size=2)+
+                   colour=end$ind[c(q5,q4)]), size=2)+
   theme(legend.position = "bottom")+ 
   geom_violin(aes(x=factor(end$Percentage[c(q5,q4)]),y=end$TD[c(q5,q4)]))+
   ylab("TD")+ xlab("Remove %")+
@@ -219,12 +219,20 @@ end <- read.csv("Grid.end",header = T)
 
 class <- readShapePoly("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/Grid25_PD.shp")
 
-q5 <- paste("X",class$SP_ID[grep("Q5",class$Index)],sep="")
-q5 <- which(end$Area%in%q5)
 
-q4 <- paste("X",class$SP_ID[grep("Q4",class$Index)],sep="")
-q4 <- which(end$Area%in%q4)
+ind <- class$Index
 
+ind <- rep(ind,(length(end$Area)/length(unique(end$Area))))
+           
+           
+end <- cbind(end,ind)
+         
+           
+q5 <- grep("Q5",end$ind)
+       
+q4 <- grep("Q4",end$ind)
+           
+           
 #brewer.pal.info
 
 col <- rep(brewer.pal(9,"Reds"), length(unique(end$Area[q5])))
@@ -272,20 +280,12 @@ p +geom_jitter(aes(x=factor(end$Percentage[q4]),
 
 dev.off()
 
-
-novoQ <- rep(NA, length(end$Area))
-
-novoQ[q5] <- rep("Q5", length(novoQ[q5]))
-novoQ[q4] <- rep("Q4", length(novoQ[q4]))
-
-end$Area <- as.factor(novoQ)
-
 png(filename = "PD_grid25Q4Q5_end.png",width = 1500,height = 1000)
 
 p <- ggplot()
 p +geom_jitter(aes(x=factor(end$Percentage[c(q5,q4)]),
                    y=end$PD[c(q5,q4)],
-                   colour=end$Area[c(q5,q4)]), size=2)+
+                   colour=end$ind[c(q5,q4)]), size=2)+
   theme(legend.position = "bottom")+ 
   geom_violin(aes(x=factor(end$Percentage[c(q5,q4)]),y=end$PD[c(q5,q4)]))+
   ylab("PD")+ xlab("Remove %")+
@@ -310,18 +310,24 @@ end <- read.csv("Grid.end",header = T)
 
 class <- readShapePoly("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/Grid25_AvTD.shp")
 
-q5 <- paste("X",class$SP_ID[grep("Q5",class$Index)],sep="")
-q5 <- which(end$Area%in%q5)
 
-q4 <- paste("X",class$SP_ID[grep("Q4",class$Index)],sep="")
-q4 <- which(end$Area%in%q4)
+ind <- class$Index
 
-#brewer.pal.info
+ind <- rep(ind,(length(end$Area)/length(unique(end$Area))))
+
+
+end <- cbind(end,ind)
+
+
+q5 <- grep("Q5",end$ind)
+
+q4 <- grep("Q4",end$ind)
+
+
+end$AvTD <- log2(end$AvTD)
 
 col <- rep(brewer.pal(9,"Reds"), length(unique(end$Area[q5])))
 col <- col[length(col):1]
-
-end$AvTD <- log2(end$AvTD)
 
 png(filename = "AvDT_grid25Q5_end.png",width = 1500,height = 1000)
 
@@ -331,7 +337,7 @@ p +geom_jitter(aes(x=factor(end$Percentage[q5]),
                    colour=end$Area[q5]), size=2)+
   theme(legend.position = "none")+ 
   geom_violin(aes(x=factor(end$Percentage[q5]),y=end$AvTD[q5]))+
-  ylab("AvTD")+ xlab("Remove %")+
+  ylab("log AvTD")+ xlab("Remove %")+
   ggtitle("Endemic species for 25° grid  (AvTD-Q5)")+
   theme(panel.background = element_rect(fill = "gray97"))+
   scale_color_manual(values = col)+
@@ -365,20 +371,12 @@ p +geom_jitter(aes(x=factor(end$Percentage[q4]),
 
 dev.off()
 
-
-novoQ <- rep(NA, length(end$Area))
-
-novoQ[q5] <- rep("Q5", length(novoQ[q5]))
-novoQ[q4] <- rep("Q4", length(novoQ[q4]))
-
-end$Area <- as.factor(novoQ)
-
 png(filename = "AvDT_grid25Q4Q5_end.png",width = 1500,height = 1000)
 
 p <- ggplot()
 p +geom_jitter(aes(x=factor(end$Percentage[c(q5,q4)]),
                    y=end$AvTD[c(q5,q4)],
-                   colour=end$Area[c(q5,q4)]), size=2)+
+                   colour=end$ind[c(q5,q4)]), size=2)+
   theme(legend.position = "bottom")+ 
   geom_violin(aes(x=factor(end$Percentage[c(q5,q4)]),y=end$AvTD[c(q5,q4)]))+
   ylab("AvTD")+ xlab("Remove %")+
