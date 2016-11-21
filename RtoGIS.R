@@ -10,15 +10,15 @@ library(dismo)
 ## Go to the work directory where are the shape poly 
 setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Distribution/shp/Grid/")
 # Read the shape file
-grid <- readShapePoly("grid_50g.shp")
+grid <- readShapePoly("grid_1g.shp")
 #
 # Now, go to the directory where are the index results
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 # Read the results depending on the cell size
-x <- read.csv("DT.grid50",header=T)
+x <- read.csv("AvTD.grid1",header=T)
 # Extract the index values
-area <- x$area 
-x <- x$W
+area <- read.csv("DT.grid1")$area 
+x <- x$Dplus
 # Check the values
 x
 # Due to there are many cell without index values (this is beacuse the species distribution)
@@ -47,9 +47,9 @@ class
 # Now, the hard part...
 # 
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/")
 
-rawGrid <- read.csv("grid_50g.dist.matrix",header = T)
+rawGrid <- read.csv("grid_1g.dist.matrix",header = T)
 
 sp <- rawGrid$especie
 
@@ -116,6 +116,6 @@ class
 
 grid$Index <- class
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
-writePolyShape(grid,fn = "Grid50_TD")
+writePolyShape(grid,fn = "Grid1_AvTD")
