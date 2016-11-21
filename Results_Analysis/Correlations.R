@@ -3,7 +3,7 @@
 library(ggplot2)
 
 ## Set working directory
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Julio1/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/")
 
 ## Read the absence/presence tables for the total richness
 
@@ -48,7 +48,7 @@ grid.t.rich
 # f.Rich are the the filogenetic richness
 # t.Rich are the whole richness
 
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
 index.area <- data.frame(Area=read.csv("DT.Area")$area,
                          DT=read.csv("DT.Area")$W,
@@ -95,20 +95,20 @@ fi
 ## t.Rich vs Index
 
 fi <- ggplot()
-fi <- fi + geom_point(aes(x=index.grid$t.Rich,y = log(index.grid$DT)),colour="red",shape=2)
-fi <- fi + geom_point(aes(x=index.grid$t.Rich,y = log(index.grid$PD)),colour="green",shape=2)
-fi <- fi + geom_point(aes(x=index.grid$t.Rich,y = log(index.grid$AvDT)),colour="orange",shape=2)
+fi <- fi + geom_point(aes(x=log(index.grid$t.Rich),y = log(index.grid$DT)),colour="red",shape=2)
+fi <- fi + geom_point(aes(x=log(index.grid$t.Rich),y = log(index.grid$PD)),colour="green",shape=2)
+fi <- fi + geom_point(aes(x=log(index.grid$t.Rich),y = log(index.grid$AvDT)),colour="orange",shape=2)
 fi
 
 # t.Rich+f.rich vs Index
 
 fi <- ggplot()
-fi <- fi + geom_point(aes(x=index.grid$f.Rich,y = log(index.grid$DT)),colour="red",shape=1)
-fi <- fi + geom_point(aes(x=index.grid$f.Rich,y = log(index.grid$PD)),colour="green",shape=1)
-fi <- fi + geom_point(aes(x=index.grid$f.Rich,y = log(index.grid$AvDT)),colour="orange",shape=1)
-fi <- fi + geom_point(aes(x=index.grid$t.Rich,y = log(index.grid$DT)),colour="red",shape=2)
-fi <- fi + geom_point(aes(x=index.grid$t.Rich,y = log(index.grid$PD)),colour="green",shape=2)
-fi <- fi + geom_point(aes(x=index.grid$t.Rich,y = log(index.grid$AvDT)),colour="orange",shape=2)
+fi <- fi + geom_point(aes(x=log(index.grid$f.Rich),y = log(index.grid$DT)),colour="red",shape=1)
+fi <- fi + geom_point(aes(x=log(index.grid$f.Rich),y = log(index.grid$PD)),colour="green",shape=1)
+fi <- fi + geom_point(aes(x=log(index.grid$f.Rich),y = log(index.grid$AvDT)),colour="orange",shape=1)
+fi <- fi + geom_point(aes(x=log(index.grid$t.Rich),y = log(index.grid$DT)),colour="red",shape=2)
+fi <- fi + geom_point(aes(x=log(index.grid$t.Rich),y = log(index.grid$PD)),colour="green",shape=2)
+fi <- fi + geom_point(aes(x=log(index.grid$t.Rich),y = log(index.grid$AvDT)),colour="orange",shape=2)
 fi
 
 ##
@@ -130,6 +130,54 @@ k <- diff(range(index.grid$AvDT)) / h # Rice Rules
 AvTD.h <- ggplot()+geom_histogram(aes(index.grid$AvDT))
 AvTD.h
 shapiro.test(index.grid$AvDT)
+
+##############
+# Others PLOT#
+##############
+TDcort <- cor.test(index.grid$t.Rich,index.grid$DT,method = "spearman")
+TDcorf <- cor.test(index.grid$f.Rich,index.grid$DT,method = "spearman")
+
+TD1 <- ggplot(data = index.grid)+geom_point(aes(y=log(DT),x=log(t.Rich),colour="TotalRichness"))+
+  geom_abline(intercept = , slope = TDcort$estimate, colour="red")+
+  geom_point(aes(y=log(DT),x=log(f.Rich),colour="PhyloRichness"))+
+  geom_abline(intercept = , slope = TDcorf$estimate, colour="blue")
+TD1
+
+PDcort <- cor.test(x=index.grid$t.Rich,y=index.grid$PD,method = "pearson")
+PDcorf <- cor.test(x=index.grid$f.Rich,y=index.grid$PD,method = "pearson")
+
+PD1 <- ggplot(data = index.grid)+geom_point(aes(y=log(PD),x=log(t.Rich),colour="TotalRichness"))+
+  geom_abline(intercept = -2, slope = PDcort$estimate, colour="red")+
+  geom_point(aes(y=log(PD),x=log(f.Rich),colour="PhyloRichness"))+
+  geom_abline(intercept = -2, slope = PDcorf$estimate, colour="blue")
+PD1
+
+AvTDcort <- cor.test(index.grid$t.Rich,index.grid$AvDT,method = "spearman")
+AvTDcorf <- cor.test(index.grid$f.Rich,index.grid$AvDT,method = "spearman")
+
+AvTD1 <- ggplot(data = index.grid)+geom_point(aes(y=log(AvDT),x=log(t.Rich),colour="TotalRichness"))+
+  geom_abline(intercept = , slope = AvTDcort$estimate, colour="red")+
+  geom_point(aes(y=log(DT),x=log(f.Rich),colour="PhyloRichness"))+
+  geom_abline(intercept = , slope = AvTDcorf$estimate, colour="blue")
+AvTD1
+
+TR <- ggplot(data=index.grid)+
+      geom_point(aes(x=log(t.Rich), y=log(DT), colour="TD"))+
+      geom_point(aes(x=log(t.Rich), y=log(PD), colour="PD"))+
+      geom_point(aes(x=log(t.Rich), y=log(AvDT), colour="AvTD"))+
+      scale_color_discrete(name=NULL)+
+      xlab("log Total Richness") + ylab("log Index")+
+      theme(legend.position=c(.8,.2),
+            legend.title=element_text(size = 20,face = "bold"),
+            legend.text = element_text(size = 20),
+            legend.key.size = unit(.7, "cm"),
+            legend.key = element_rect(fill= "white",colour="black"))+  
+      guides(colour = guide_legend(override.aes = list(size=4)))
+TR
+
+png("RichnessVSIndex.png", width =600 , height = 600)
+TR
+dev.off()
 
 ## Create outcome matrix
 
