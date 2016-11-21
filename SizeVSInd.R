@@ -10,7 +10,7 @@ PAshp2 <- PAshp[order(PAshp$NAME), ]
 AEshp <- as.data.frame(readShapePoly("A_endemism.NAB.shp"))
 AEshp2 <- AEshp[order(AEshp$Name), ]
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
 PA <- data.frame(ID=read.csv("TD.PNN")$area,
                  TD=read.csv("TD.PNN")$W,
@@ -22,14 +22,13 @@ AE <-data.frame(ID=read.csv("DT.Area")$area,
                 PD=read.csv("PD.Area")$PD,
                 AvTD=read.csv("AvTD.Area")$Dplus)
 
-PNNin <- grep("PNNin",PA2$ID)
-PNNout <- grep("PNNout",PA2$ID)
-NABin <- grep("NABin",PA2$ID)
-
 
 PA2 <- PA[order(PA$ID), ]
 AE2 <- AE[order(AE$ID), ]
 
+PNNin <- grep("PNNin",PA2$ID)
+PNNout <- grep("PNNout",PA2$ID)
+NABin <- grep("NABin",PA2$ID)
 
 PAend <- cbind(PA2[-c(PNNin,PNNout,NABin),], Area=PAshp2$Area)
 AEend <- cbind(AE2[-c(PNNin,PNNout,NABin),], Area=AEshp2$Area)
@@ -37,30 +36,30 @@ AEend <- cbind(AE2[-c(PNNin,PNNout,NABin),], Area=AEshp2$Area)
 cor1 <- cor.test(x=AEend$Area,y=log(AEend$TD), method = "spearman")
 
 p1 <- ggplot(data=AEend)+ geom_point(aes(x=Area,y=log(TD)))+xlab("Size of the Areas of Endemism")+
-      ylab("log TD Index")+
-      geom_smooth(aes(x=Area,y=log(TD)), method = "lm")+
-      geom_label(aes(x=80000000000,y=5.1), label=(paste("R",cor1$estimate,sep = " : ")))+
-      theme(plot.margin = unit(c(0,5,1,1),units="points"))
+  ylab("log TD Index")+
+  geom_smooth(aes(x=Area,y=log(TD)), method = "lm")+
+  geom_label(aes(x=80000000000,y=5.1), label=(paste("R",cor1$estimate,sep = " : ")))+
+  theme(plot.margin = unit(c(0,5,1,1),units="points"))
 p1 #bottom
 
 
 cor2 <- cor.test(x=AEend$Area,y=log(AEend$PD), method = "spearman")
 
 p2 <- ggplot(data = AEend)+geom_point(aes(x=Area,y=log(PD)))+xlab(NULL)+ylab("log PD index")+
-      geom_smooth(aes(x=Area, y=log(PD)), method = "lm")+
-      geom_label(aes(x=80000000000,y=3.1), label=(paste("R", round(cor2$estimate,digits = 1),sep = " : ")))+
-      theme(axis.text.x=element_blank(),
-             axis.ticks.x=element_blank(),
-             plot.margin = unit(c(0,5,1,1),units="points"))
+  geom_smooth(aes(x=Area, y=log(PD)), method = "lm")+
+  geom_label(aes(x=80000000000,y=3.1), label=(paste("R", round(cor2$estimate,digits = 1),sep = " : ")))+
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        plot.margin = unit(c(0,5,1,1),units="points"))
 p2 #middle
 
 
 cor3 <- cor.test(x=AEend$Area,y=log(AEend$AvTD), method = "spearman")
 
 p3 <- ggplot(data = AEend)+geom_point(aes(x=Area,y=log(AvTD)))+xlab(NULL)+ylab("AvTD index")+
-      geom_smooth(aes(x=Area, y=log(AvTD)), method = "lm")+
-      geom_label(aes(x=80000000000,y=1.1), label=(paste("R", round(cor3$estimate,digits = 1),sep = " : ")))+  
-      theme(axis.text.x=element_blank(),
+  geom_smooth(aes(x=Area, y=log(AvTD)), method = "lm")+
+  geom_label(aes(x=80000000000,y=1.5), label=(paste("R", round(cor3$estimate,digits = 1),sep = " : ")))+  
+  theme(axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         plot.margin = unit(c(0,5,1,1),units="points"))
 p3 #middle
