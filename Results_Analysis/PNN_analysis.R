@@ -4,7 +4,7 @@ library(grid)
 library(gridExtra)
 
 # Set the working directory
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
 # Read the data, and create a unique matrix
 PNN <- data.frame(Area=read.csv("TD.PNN")$area, #Read the PA names
@@ -119,7 +119,7 @@ PNN.avtd
 #################################################################################
 
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
 write.table(PNN.td,
             file = "TD_PNN.r",
@@ -159,7 +159,7 @@ PNN2.zeroAvTD <- length(which(PNN2$AvTD==0))
 ############################################################################
 
 # Set a new working directory
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/")
 
 # Read the absence/presence matrix for the PA
 PNN.tr0 <- read.csv("PNN.dist.matrix",header = T)
@@ -171,14 +171,14 @@ PNN.tr1 <- PNN.tr0[,-1]
 PNN.sumTR <- as.matrix(apply(PNN.tr1, 2, sum))
 
 # Set a new wokking directory
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R//")
 
 # Read the matrix for the TD index
 PNNTD <- read.csv("TD.PNN", header = T)
 # join the TD and the total richness matrices
 PNNTD <- as.data.frame(cbind(PNNTD,PNN.sumTR))
 # Remove the PNNin, PNNout and NABin rows
-PNNTD <- PNNTD[-c(118,119,120),]
+PNNTD <- PNNTD[-c(118,117,116),]
 # Remove the PA with index values equal zero
 PNNTD <- PNNTD[-which(PNNTD$W==0),]
 # Ordeing the matrix in decreasing order given the TD index
@@ -192,14 +192,32 @@ k <- diff(range(PNNTD$W))/h
 
 # Plot the histogram
 ggplot()+geom_histogram(aes(PNNTD$W, fill=..count..), bins = k, binwidth = h)+xlab("TD Index")+ylab("Count")
-#Plot TD index vs PhyloRichnes
-ggplot()+geom_point(aes(x=PNNTD$rich,y=PNNTD$W))+xlab("Phylo-Richness")+ylab("W index")
+
 # Spearman Correlation TD index vs PhyloRichness
-cor.test(PNNTD$rich,PNNTD$W, method = 'spearman')$estimate
-#Plot TD index vs TotalRichness
-ggplot()+geom_point(aes(x=PNNTD$PNN.sumTR,y=PNNTD$W))+xlab("Total-Richness")+xlab("W index")
+cor.test(PNNTD$rich,PNNTD$W, method = 'spearman', exact = F)$estimate
+
+est <- paste("R=",round(cor.test(PNNTD$rich,PNNTD$W, method = 'spearman', exact = F)$estimate, digits = 3),sep="")
+
+#Plot TD index vs PhyloRichnes
+cor1 <- ggplot()+geom_point(aes(x=PNNTD$rich,y=PNNTD$W))+xlab("Phylo-Richness")+ylab("W index")+
+  geom_label(aes(x=25,y=300), label=est, size=10)+
+  geom_smooth(aes(x=PNNTD$rich,y=PNNTD$W), method = "lm")
+
 #Spearman correlation TD index vs TotalRichness
-cor.test(PNNTD$PNN.sumTR,PNNTD$W, method = 'spearman')$estimate
+cor.test(PNNTD$PNN.sumTR,PNNTD$W, method = 'spearman', exact = F)$estimate
+
+est2 <- paste("R=",round(cor.test(PNNTD$PNN.sumTR,PNNTD$W, method = 'spearman', exact = F)$estimate, digits = 3),sep="")
+
+#Plot TD index vs TotalRichness
+cor2 <- ggplot()+geom_point(aes(x=PNNTD$PNN.sumTR,y=PNNTD$W))+xlab("Total-Richness")+ylab("W index")+
+  geom_label(aes(x=50,y=300), label=est2, size=10)+
+  geom_smooth(aes(x=PNNTD$PNN.sumTR,y=PNNTD$W), method = "lm")
+
+
+
+png("PNN2RichVsIndexTD.png")
+grid.arrange(cor1,cor2,heights = c(2/4, 2/4))
+dev.off()
 
 
 p1 <- ggplot() + geom_point(aes(x=1:length(PNNTD$area),y=log(PNNTD$W)),colour="black")+
@@ -228,11 +246,11 @@ dev.off()
 
 #####################################################################
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R//")
 
 PNNPD <- read.csv("PD.PNN", header = T) ## Read the PD values
 PNNPD <- as.data.frame(cbind(PNNPD,PNN.sumTR)) # Combine PD matrix with Total Richness
-PNNPD <- PNNPD[-c(118,119,120),] # Remove the NABin, PNNin and PNNout
+PNNPD <- PNNPD[-c(118,117,116),] # Remove the NABin, PNNin and PNNout
 PNNPD <- PNNPD[-which(PNNPD$PD==0),] # Remove PNN with PD value == 0
 PNNPD <- PNNPD[order(PNNPD$PD, decreasing = T),] # Order the matrix in decreasing order
 
@@ -242,14 +260,32 @@ h <- sqrt(length(PNNPD$PD))
 k <- diff(range(PNNPD$PD))/h
 #Plot the hhistogram
 ggplot()+geom_histogram(aes(PNNPD$PD, fill=..count..), bins = k, binwidth = h)+xlab("TD Index")+ylab("Count")
+
+cor.test(PNNPD$SR,PNNPD$PD, method = 'spearman', exact = F)$estimate
+
+est <- paste("R=",round(cor.test(PNNPD$SR,PNNPD$PD, method = 'spearman', exact = F)$estimate, digits = 3),sep="")
+
 #Plot the PD index vs Phylogenetic Richness
-ggplot()+geom_point(aes(x=PNNPD$SR,y=PNNPD$PD))+xlab("Phylo-Richness")+ylab("PD index")
+cor1 <- ggplot()+geom_point(aes(x=PNNPD$SR,y=PNNPD$PD))+xlab("Phylo-Richness")+ylab("PD index")+
+  geom_label(aes(x=35,y=90), label=est, size=10)+
+  geom_smooth(aes(x=PNNPD$SR,y=PNNPD$PD), method = "lm")
+
+
+cor.test(PNNPD$PNN.sumTR,PNNPD$PD, method = 'spearman', exact = F)$estimate
+
+est2 <- paste("R=",round(cor.test(PNNPD$PNN.sumTR,PNNPD$PD, method = 'spearman', exact = F)$estimate, digits = 3),sep="")
+
+
 # Spearman corraltion for PD and Phylogenetic richness
-cor.test(PNNPD$SR,PNNPD$PD, method = 'spearman')$estimate
-#Plot the PD index vs Total Richness
-ggplot()+geom_point(aes(x=PNNPD$PNN.sumTR,y=PNNPD$PD))+xlab("Total-Richness")+xlab("PD index")
-#Spearman correlation for PD and Total Richness
-cor.test(PNNPD$PNN.sumTR,PNNPD$PD, method = 'spearman')$estimate
+cor2 <- ggplot()+geom_point(aes(x=PNNPD$PNN.sumTR,y=PNNPD$PD))+xlab("Total-Richness")+ylab("PD index")+
+  geom_label(aes(x=65,y=90), label=est2, size=10)+
+  geom_smooth(aes(x=PNNPD$PNN.sumTR,y=PNNPD$PD), method = "lm")
+
+
+png("PNN2RichVsIndexPD.png")
+grid.arrange(cor1,cor2,heights = c(2/4, 2/4))
+dev.off()
+
 
 p1 <- ggplot() + geom_point(aes(x=1:length(PNNTD$area),y=log(PNNPD$PD)),colour="black")+
   xlab("Protected Areas")+ylab("log PD Index")+
@@ -277,11 +313,11 @@ dev.off()
 #####################################################################
 
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
 PNNAvTD <- read.csv("AvTD.PNN", header = T) ## Read the AvTD values
 PNNAvTD <- as.data.frame(cbind(PNNAvTD,PNN.sumTR))# Combine AvTD matrix with Total Richness
-PNNAvTD <- PNNAvTD[-c(118,119,120),]# Remove the NABin, PNNin and PNNout
+PNNAvTD <- PNNAvTD[-c(118,117,116),]# Remove the NABin, PNNin and PNNout
 PNNAvTD <- PNNAvTD[-which(PNNAvTD$Dplus==0),]# Remove PNN with PD value == 0
 PNNAvTD <- PNNAvTD[order(PNNAvTD$Dplus, decreasing = T),] # Order the matrix in decreasing order
 
@@ -292,14 +328,32 @@ k <- diff(range(PNNAvTD$Dplus))/h
 
 #Plot the histogram
 ggplot()+geom_histogram(aes(PNNAvTD$Dplus, fill=..count..), bins = k, binwidth = h)+xlab("AvTD Index")+ylab("Count")
-#Plot AvTD vs Phylogenetic Richness
-ggplot()+geom_point(aes(x=PNNAvTD$Species,y=PNNAvTD$Dplus))+xlab("Phylo-Richness")+ylab("AvTD index")
+
 #Spearman corraltion for AvTD and Phylogenetic Richness
-cor.test(PNNAvTD$Species,PNNAvTD$Dplus, method = 'spearman')$estimate
-#Plot AvTD vs Total Richness
-ggplot()+geom_point(aes(x=PNNAvTD$PNN.sumTR,y=PNNAvTD$Dplus))+xlab("Total-Richness")+ylab("AvTD index")
+cor.test(PNNAvTD$Species,PNNAvTD$Dplus, method = 'spearman', exact = F)$estimate
+
+est <- paste("R=",round(cor.test(PNNAvTD$Species,PNNAvTD$Dplus, method = 'spearman', exact = F)$estimate, digits = 3),sep="")
+
+#Plot AvTD vs Phylogenetic Richness
+cor1 <- ggplot()+geom_point(aes(x=PNNAvTD$Species,y=PNNAvTD$Dplus))+xlab("Phylo-Richness")+ylab("AvTD index")+
+  geom_label(aes(x=50,y=50), label=est, size=10)+
+  geom_smooth(aes(x=PNNAvTD$Species,y=PNNAvTD$Dplus), method = "lm")
+
 #Spearman correlation for AvTD and Total richness
-cor.test(PNNAvTD$PNN.sumTR,PNNAvTD$Dplus, method = 'spearman')$estimate
+cor.test(PNNAvTD$PNN.sumTR,PNNAvTD$Dplus, method = 'spearman', exact = F)$estimate
+
+est2 <- paste("R=",round(cor.test(PNNAvTD$PNN.sumTR,PNNAvTD$Dplus, method = 'spearman', exact = F)$estimate, digits = 3),sep="")
+
+#Plot AvTD vs Total Richness
+cor2 <- ggplot()+geom_point(aes(x=PNNAvTD$PNN.sumTR,y=PNNAvTD$Dplus))+xlab("Phylo-Richness")+ylab("AvTD index")+
+  geom_label(aes(x=70,y=50), label=est2, size=10)+
+  geom_smooth(aes(x=PNNAvTD$PNN.sumTR,y=PNNAvTD$Dplus), method = "lm")
+
+
+png("PNN2RichVsIndexAvTD.png")
+grid.arrange(cor1,cor2,heights = c(2/4, 2/4))
+dev.off()
+
 
 p1 <- ggplot() + geom_point(aes(x=1:length(PNNAvTD$Species),y=log(PNNAvTD$Dplus)),colour="black")+
   xlab("Protected Areas")+ylab("log AvTD Index")+
@@ -338,7 +392,7 @@ Areas <- Areas[1:length(rownames(PNNAvTD)), ]
 colnames(Areas) <- c("TD", "PD", "AvTD")
 Areas <- as.data.frame(Areas)
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/")
 
 # Read the table ith the general information
 GI <- read.csv("General.info", header = T)
@@ -373,7 +427,7 @@ PNN.m <- PNN.m[,-1]
 # Make the total sumatory for each PA
 BL.total <- as.matrix(apply(PNN.m, 2, sum))
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
 write.csv(BL.total, "PNN_BL_Total", quote = F, row.names = T)
 
@@ -406,6 +460,6 @@ colnames(Areas.f) <- c("TD","BL","PD","BL","AvTD","BL")
 Areas.f
 
 #Save it
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
 write.table(Areas.f, "PNN_Class.table",quote = F, col.names = T, row.names = F)
