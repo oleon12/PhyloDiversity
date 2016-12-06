@@ -2,7 +2,7 @@ library(ggplot2)
 library(cowplot)
 library(gridExtra)
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/")
 
 general.info <- read.csv("General.info",header = T)
 
@@ -73,7 +73,6 @@ avdt1 <- ggplot(data = general.info)+
         axis.text.x = element_blank(),
         axis.ticks = element_blank(),
         axis.title.y = element_text(size = 30,face="bold"),
-        legend.title = element_text(size=20),
         legend.text = element_text(size = 20),
         legend.key.size = unit(2, "cm"))+
   guides(colour = guide_legend(override.aes = list(size=5)))
@@ -89,7 +88,6 @@ avdt2 <- ggplot(data = general.info) +
         axis.text.x = element_blank(),
         axis.ticks = element_blank(),
         axis.title.y = element_text(size = 30,face="bold"),
-        legend.title = element_text(size=20),
         legend.text = element_text(size = 20),
         legend.key.size = unit(2, "cm"))+
   guides(colour = guide_legend(override.aes = list(size=5)))
@@ -97,7 +95,7 @@ avdt2 <- ggplot(data = general.info) +
 
 grid.arrange(dt1, dt2, pd1, pd2,avdt1,avdt2, ncol=2, nrow =3)
 
-png(filename = "~/Documentos/Omar/Tesis/Taxa/Results/Final/ImgTables/EndemicSpecies/grid.png",
+png(filename = "~/Documentos/Omar/Tesis/Taxa/Results/Final2/Endemic/grid.png",
     width = 1001,
     height=1000)
 grid.arrange(dt1, dt2, pd1, pd2,avdt1,avdt2, ncol=2, nrow =3)
@@ -114,15 +112,15 @@ GI.end <- as.data.frame(rbind(End1, WD1))
 head(GI.end)
 
 bl.plot <- ggplot()+geom_point(aes(x=(1:length(WD1$BL))+1,y=log(WD1$BL),colour=WD1$Ende.WD),size=6)+
-         geom_point(aes(x=1:length(End1$BL),y=log(End1$BL),colour=End1$Ende.WD),size=6)+
-         ylab("log Branch Lengths")+xlab("Species")+ 
-         theme(axis.text.x=element_blank(),
-               axis.text.y=element_text(size=30),
-               axis.ticks=element_blank(),
-               axis.title.y=element_text(size=40),
-               axis.title.x=element_text(size=40),
-               panel.background = element_rect(fill = "gray97"),
-               panel.grid.major = element_line(colour = "white"))+
+  geom_point(aes(x=1:length(End1$BL),y=log(End1$BL),colour=End1$Ende.WD),size=6)+
+  ylab("log Branch Lengths")+xlab("Species")+ 
+  theme(axis.text.x=element_blank(),
+        axis.text.y=element_text(size=30),
+        axis.ticks=element_blank(),
+        axis.title.y=element_text(size=40),
+        axis.title.x=element_text(size=40),
+        panel.background = element_rect(fill = "gray97"),
+        panel.grid.major = element_line(colour = "white"))+
   scale_colour_discrete(name="Species",
                         labels=c("Endemic","Widespread"))+
   theme(legend.position=c(.8,.9),
@@ -136,7 +134,7 @@ bl.plot <- ggplot()+geom_point(aes(x=(1:length(WD1$BL))+1,y=log(WD1$BL),colour=W
   geom_text(aes(x=740,y=1.25),label="Endemic = 299 spp",size=15)+
   geom_text(aes(x=720,y=0),label="Total = 1255 spp",size=15)
 
-png(filename = "~/Documentos/Omar/Tesis/Taxa/Results/Final/ImgTables/EndemicSpecies/BL.png",
+png(filename = "~/Documentos/Omar/Tesis/Taxa/Results/Final/Endemic/BL.png",
     width = 1500,
     height=1000)
 bl.plot
