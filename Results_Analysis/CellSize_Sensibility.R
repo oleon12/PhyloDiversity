@@ -10,22 +10,22 @@ library(shapefiles)
 library(SDMTools)
 
 ## Go to the work directory where are the shape poly 
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR//")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 # Read the shape file
-grid <- readShapePoly("Grid1_AVTD.shp")
+grid <- readShapePoly("Grid1_AvTD.shp")
 pos1.Q5 <- grep("Q5", grid$Index)
 pos1.Q5 <- pos1.Q5 + 1
-grid1 <- read.shp("Grid1_AVTD.shp")
+grid1 <- read.shp("Grid1_AvTD.shp")
 #
-grid <- readShapePoly("Grid50_AVTD.shp")
+grid <- readShapePoly("Grid50_AvTD.shp")
 pos50.Q5 <- grep("Q5", grid$Index)
 pos50.Q5 <- pos50.Q5 + 1
-grid50 <- read.shp("Grid50_AVTD.shp")
+grid50 <- read.shp("Grid50_AvTD.shp")
 #
-grid <- readShapePoly("Grid25_AVTD.shp")
+grid <- readShapePoly("Grid25_AvTD.shp")
 pos25.Q5 <- grep("Q5", grid$Index)
 pos25.Q5 <- pos25.Q5 + 1
-grid25 <- read.shp("Grid25_AVTD.shp")
+grid25 <- read.shp("Grid25_AvTD.shp")
 #
 
 g25.50 <- c()
@@ -104,6 +104,6 @@ comparison <- as.data.frame(comparison)
 
 comparison
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final/")
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/")
 
 write.csv(comparison, "AvTD_SensibilityAnalysis", quote = F, row.names =T ,col.names = T)
