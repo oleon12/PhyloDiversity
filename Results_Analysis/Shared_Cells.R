@@ -36,7 +36,7 @@
 library(classInt)
 
 ## Set working directory
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
 ## Create a data frame with index values and cell ID
 index.grid <- data.frame(Cells=read.csv("DT.grid25")$area,
@@ -97,7 +97,7 @@ r2[3,3] <- round((length(which(pd.imp%in%avtd.imp))/ (length(pd.imp)+length(avtd
 
 r2
 
-write.table(r2,file = "~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/Index.ShareCells",
+write.table(r2,file = "~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/Index.ShareCells",
             quote = F, row.names = T, col.names = T)
 
 ##########################################################################################3
@@ -121,7 +121,7 @@ r3[3,3] <- round((length(which(avtd.imp%in%pd.imp))/ (length(pd.imp)+length(avtd
 
 r3
 
-write.table(r3,file = "~/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/Index2.ShareCells",
+write.table(r3,file = "~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/Index2.ShareCells",
             quote = F, row.names = T, col.names = T)
 
 
