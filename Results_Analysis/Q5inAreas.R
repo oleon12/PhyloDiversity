@@ -10,9 +10,9 @@ library(shapefiles)
 library(SDMTools)
 
 ## Go to the work directory where are the shape poly 
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final/Raw_IndexR/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 # Read the shape file
-grid <- readShapePoly("Grid25_AVTD.shp")
+grid <- readShapePoly("Grid25_AvTD.shp")
 pos.Q5 <- grep("Q5", grid$Index)
 pos.Q5 <- pos.Q5 + 1
 #
