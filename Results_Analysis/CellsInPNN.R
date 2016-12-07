@@ -10,9 +10,9 @@ library(shapefiles)
 library(SDMTools)
 
 ## Go to the work directory where are the shape poly 
-setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Julio1/RawIndex/")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 # Read the shape file
-grid <- readShapePoly("Grid25_PD.shp")
+grid <- readShapePoly("Grid25_AvTD.shp")
 pos.Q5 <- grep("Q5", grid$Index)
 pos.Q5 <- pos.Q5+1
 #
@@ -36,30 +36,38 @@ for(i in 1:length(pos.Q5)){
   
   cell <- grid2$shp[[pos]]$points
   
-  for (j in 1:length(PNN.names)) {
-  
+  for(j in 1:length(PNN.names)){
+    
     PNN.coord <- PNN$shp[[j]]$points
     
-    pnt <- pnt.in.poly(pnts = cell, poly.pnts = PNN.coord)
+    pnt <- pnt.in.poly(pnt= cell, poly.pnts= PNN.coord)
     
-    if(1%in%pnt$pip){
-      
-      CellinPNN <- c(CellinPNN, pos)
-      PNNinCell <- c(PNNinCell, as.character(PNN.names[j]))
-      
-    }
+    n <- grep(1, pnt$pip)
+    
+    if(length(n)==5){CellinPNN <- c(CellinPNN,1)}
+    
+    if(length(n)==4){CellinPNN <- c(CellinPNN,1)}
+    
+    if(length(n)==3){CellinPNN <- c(CellinPNN,0.75)}
+    
+    if(length(n)==2){CellinPNN <- c(CellinPNN,0.50)}
+    
+    if(length(n)==1){CellinPNN <- c(CellinPNN,0.25)}
     
   }
 }
 
+sum(CellinPNN) / length(pos.Q5)
+
+
 for(i in 1:length(PNN.names)){
   
   PNN.coord <- PNN$shp[[i]]$points
-
+  
   for (j in 1:length(pos.Q5)) {
     
     pos <- pos.Q5[j]
-
+    
     cell <- grid2$shp[[pos]]$points  
     
     pnt2 <- pnt.in.poly(pnts = PNN.coord,poly.pnts = cell)
@@ -73,9 +81,6 @@ for(i in 1:length(PNN.names)){
   }
 }
 
-
-CellinPNN
-length(CellinPNN)/length(pos.Q5)
 
 PNNinCell
 unique(PNNinCell50)
