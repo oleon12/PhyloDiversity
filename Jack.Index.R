@@ -21,6 +21,7 @@
 # Also, the remotion percetange could be change modifying the default value (0.25) in the variable rem.samp at the beginning of the first loop for.
 # The script returns a matrix with Jackknife support value of the index for each distibution matrix. 
 
+####################################################################################3
 toNum <-function(x){
   out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
   for (i in 1:length(colnames(x))){
@@ -30,6 +31,79 @@ toNum <-function(x){
   rownames(out) <- rownames(x)
   
   return(out)
+}
+
+####################################################################################
+avtd.root <- function(Phylo, Dist){
+  
+  rootName <- find.root(Phylo)
+  
+  for(i in 1:length(Dist[,1])){
+    
+    l <- grep(1,Dist[i, ])
+    
+    if(length(l)==1){
+      
+      Dist[i,grep(rootName,colnames(Dist))] <- 1
+      
+    }
+    
+  }
+  
+  return(Dist)
+}
+######################################################################################
+
+find.root <- function(Phylo){
+  
+  library(ape, verbose = F,quietly = T)
+  library(phangorn,verbose = F, quietly = T)
+  
+  ##########################################
+  # Filter
+  if(class(Phylo)!="phylo"){
+    stop("Your input must be a class phylo")
+  }
+  if(is.rooted(Phylo)==F){
+    stop("Your phylogeny must be rooted")
+  }
+  ###########################################
+  
+  RootNode <- length(Phylo$tip.label)+1
+  
+  Option <- c(1,length(Phylo$tip.label))
+  
+  RootTip <- c()
+  
+  for(i in 1:2){
+    
+    tip <- Option[i]
+    
+    Anc <- Ancestors(Phylo,tip)
+    
+    if(length(Anc)==1){
+      
+      RootTip <- Phylo$tip.label[Option[i]]
+    }
+  }
+  
+  if(is.null(RootTip)){
+    
+    warning("Your root terminal are not a unique specie, thus, just one will choose")
+    
+    for(i in 1:2){
+      
+      tip <- Option[i]
+      
+      Anc <- Ancestors(Phylo,tip)
+      
+      if(length(Anc)==2){
+        
+        RootTip <- Phylo$tip.label[Option[i]]
+      }
+    }
+  }
+  return(RootTip)
 }
 
 ## Load libraries.
@@ -50,7 +124,7 @@ library(SDMTools)
 
 
 # Set working directory.
-setwd("~/Documentos/Omar/Result_TesisOmar/Trees/")
+  setwd("~/Documentos/Omar/Result_TesisOmar/Trees/")
 
 # Read the directory.
 dir.tree <- dir()[grep("_tree",dir())]
@@ -67,7 +141,7 @@ for (i in 1:length(dir.tree)){
 
 # Create a multidata with the ocurrences files created before.
 
-setwd("~/Documentos/Omar/Result_TesisOmar/Final/")
+setwd("~/Documentos/Omar/Result_TesisOmar/Final2/")
 dir.data <-(dir()[grep(".matrix",dir())])
 #dir.data <- dir.data[-grep(".matrix~",dir.data)]
 
@@ -115,6 +189,9 @@ pd.origin <- list()
 avtd.origin <- list()
 
 for (i in 1:length(multi.phylo)){
+  
+  print(paste(paste("Phylogeny", i, sep=" "), paste("from", length(multi.phylo), sep=" "), sep=" "))
+  
   # And for each distribution data
   for(j in 1:length(multi.data)){
     # Both data have the same species ? Extrac from the data distribution only the species shared with the phylogeny
@@ -155,7 +232,7 @@ for (i in 1:length(multi.phylo)){
     colnames(dist2) <- sp 
     
     # DT Calculation
-    Ind <- Calculate.Index(tree=multi.phylo[[i]],dist=dist)
+    Ind <- Calculate.Index(tree=multi.phylo[[i]],dist=dist, verbose = F)
     
     name.data <- Ind$area
     if(i == 1){
@@ -175,9 +252,11 @@ for (i in 1:length(multi.phylo)){
       pd.origin[[j]] <- pd.origin[[j]] + pd}
     
     #AvDT calculation
+    distRoot <- avtd.root(Phylo = multi.phylo[[i]],Dist = dist2)
+    
     tree.dist <- cophenetic.phylo(multi.phylo[[i]])
     
-    avdt <- taxondive(comm = dist2, dis = tree.dist)
+    avdt <- taxondive(comm = distRoot, dis = tree.dist)
     
     avdt2 <- data.frame(Species=avdt$Species,
                         D=avdt$D,
@@ -302,9 +381,11 @@ for (ii in 1:100){
         pd.jack[[j]] <- pd.jack[[j]] + pd}
       
       #AvDT calculation
+      distRoot <- avtd.root(Phylo = multi.phylo[[i]],Dist = dist2)
+      
       tree.dist <- cophenetic.phylo(multi.phylo[[i]])
       
-      avdt <- taxondive(comm = dist2, dis = tree.dist)
+      avdt <- taxondive(comm = distRoot, dis = tree.dist)
       
       avdt2 <- data.frame(Species=avdt$Species,
                           D=avdt$D,
@@ -374,38 +455,38 @@ for(ii in 1:length(dt.origin)){
     
     if(ii==1){
       
-      c1 <- length(which((RankOriginTD==JackRankTD)==T))
-      if(c1==length(RankOriginTD)){dt.match[[ii]][xx] <- 1}
+      c1 <- length(which((RankOriginTD[1:3]==JackRankTD[1:3])==T))
+      if(c1==length(RankOriginTD[1:3])){dt.match[[ii]][xx] <- 1}
       
-      c2 <- length(which((RankOriginPD==JackRankPD)==T))
-      if(c2==length(RankOriginPD)){pd.match[[ii]][xx] <- 1}
+      c2 <- length(which((RankOriginPD[1:3]==JackRankPD[1:3])==T))
+      if(c2==length(RankOriginPD[1:3])){pd.match[[ii]][xx] <- 1}
       
-      c3 <- length(which((RankOriginAVTD==JackRankAVTD)==T))
-      if(c3==length(RankOriginAVTD)){avtd.match[[ii]][xx] <- 1}
+      c3 <- length(which((RankOriginAVTD[1:3]==JackRankAVTD[1:3])==T))
+      if(c3==length(RankOriginAVTD[1:3])){avtd.match[[ii]][xx] <- 1}
     
     }
     
     if(ii==5){
       
-      c1 <- length(which((RankOriginTD[1:5]==JackRankTD[1:5])==T))
-      if(c1==length(RankOriginTD[1:5])){dt.match[[ii]][xx] <- 1}
+      c1 <- length(which((RankOriginTD[1:3]==JackRankTD[1:3])==T))
+      if(c1==length(RankOriginTD[1:3])){dt.match[[ii]][xx] <- 1}
       
-      c2 <- length(which((RankOriginPD[1:5]==JackRankPD[1:5])==T))
-      if(c2==length(RankOriginPD[1:5])){pd.match[[ii]][xx] <- 1}
+      c2 <- length(which((RankOriginPD[1:3]==JackRankPD[1:3])==T))
+      if(c2==length(RankOriginPD[1:3])){pd.match[[ii]][xx] <- 1}
       
-      c3 <- length(which((RankOriginAVTD[1:5]==JackRankAVTD[1:5])==T))
-      if(c3==length(RankOriginAVTD[1:5])){avtd.match[[ii]][xx] <- 1}
+      c3 <- length(which((RankOriginAVTD[1:3]==JackRankAVTD[1:3])==T))
+      if(c3==length(RankOriginAVTD[1:3])){avtd.match[[ii]][xx] <- 1}
       
     }else{
       
-      c1 <- length(which((RankOriginTD[1:2]==JackRankTD[1:2])==T))
-      if(c1==length(RankOriginTD[1:2])){dt.match[[ii]][xx] <- 1}
+      c1 <- length(which((RankOriginTD[1]==JackRankTD[1])==T))
+      if(c1==length(RankOriginTD[1])){dt.match[[ii]][xx] <- 1}
       
-      c2 <- length(which((RankOriginPD[1:2]==JackRankPD[1:2])==T))
-      if(c2==length(RankOriginPD[1:2])){pd.match[[ii]][xx] <- 1}
+      c2 <- length(which((RankOriginPD[1]==JackRankPD[1])==T))
+      if(c2==length(RankOriginPD[1])){pd.match[[ii]][xx] <- 1}
       
-      c3 <- length(which((RankOriginAVTD[1:2]==JackRankAVTD[1:2])==T))
-      if(c3==length(RankOriginAVTD[1:2])){avtd.match[[ii]][xx] <- 1}
+      c3 <- length(which((RankOriginAVTD[1]==JackRankAVTD[1])==T))
+      if(c3==length(RankOriginAVTD[1])){avtd.match[[ii]][xx] <- 1}
       
       
     }
@@ -423,7 +504,9 @@ rownames(r.support) <- names(multi.data)
 
 for(k in 1:length(rownames(r.support))){
   
-  r.support[k,] <- c(length(which((dt.match[[k]]==1)==T))/100,length(which((pd.match[[k]]==1)==T))/100,length(which((avtd.match[[1]]==1)==T))/100) 
+  r.support[k,] <- c(length(which((dt.match[[k]]==1)==T))/100,
+                     length(which((pd.match[[k]]==1)==T))/100,
+                     length(which((avtd.match[[k]]==1)==T))/100) 
   
 }
 
