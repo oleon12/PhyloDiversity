@@ -15,16 +15,93 @@
 # The file requiere for this script is a absence/presence matrix. 
 # The outcome file is 3 list corresponding to the three indeces. Each list have (NumberOfMatrices X NumberOfRemove%) slots and each one have ii Index values for each area
 
+####################################################################################3
 toNum <-function(x){
- out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
- for (i in 1:length(colnames(x))){
-   out[,i] <- as.numeric(x[,i])
- }
- colnames(out) <- colnames(x)
- rownames(out) <- rownames(x)
- 
- return(out)
+  out <- matrix(NA, nrow = length(rownames(x)), ncol = length(colnames(x)))
+  for (i in 1:length(colnames(x))){
+    out[,i] <- as.numeric(x[,i])
+  }
+  colnames(out) <- colnames(x)
+  rownames(out) <- rownames(x)
+  
+  return(out)
 }
+
+####################################################################################
+avtd.root <- function(Phylo, Dist){
+  
+  rootName <- find.root(Phylo)
+  
+  for(i in 1:length(Dist[,1])){
+    
+    l <- grep(1,Dist[i, ])
+    
+    if(length(l)==1){
+      
+      Dist[i,grep(rootName,colnames(Dist))] <- 1
+      
+    }
+    
+  }
+  
+  return(Dist)
+}
+######################################################################################
+
+find.root <- function(Phylo){
+  
+  library(ape, verbose = F,quietly = T)
+  library(phangorn,verbose = F, quietly = T)
+  
+  ##########################################
+  # Filter
+  if(class(Phylo)!="phylo"){
+    stop("Your input must be a class phylo")
+  }
+  if(is.rooted(Phylo)==F){
+    stop("Your phylogeny must be rooted")
+  }
+  ###########################################
+  
+  RootNode <- length(Phylo$tip.label)+1
+  
+  Option <- c(1,length(Phylo$tip.label))
+  
+  RootTip <- c()
+  
+  for(i in 1:2){
+    
+    tip <- Option[i]
+    
+    Anc <- Ancestors(Phylo,tip)
+    
+    if(length(Anc)==1){
+      
+      RootTip <- Phylo$tip.label[Option[i]]
+    }
+  }
+  
+  if(is.null(RootTip)){
+    
+    warning("Your root terminal are not a unique specie, thus, just one will choose")
+    
+    for(i in 1:2){
+      
+      tip <- Option[i]
+      
+      Anc <- Ancestors(Phylo,tip)
+      
+      if(length(Anc)==2){
+        
+        RootTip <- Phylo$tip.label[Option[i]]
+      }
+    }
+  }
+  return(RootTip)
+}
+
+#################################################################################################
+
 
 ## Load libraries.
 
@@ -39,6 +116,8 @@ library(phytools)
 library(picante)
 library(jrich)
 library(SDMTools)
+library(doParallel)
+
 
 set.seed(100)
 
@@ -46,7 +125,7 @@ set.seed(100)
 
 
 # Set working directory.
-setwd("~/Documentos/Omar/Tesis/Taxa/Trees/")
+setwd("~/Documentos/Omar/Result_TesisOmar/Trees/")
 
 # Read the directory.
 dir.tree <- dir()[grep("_tree",dir())]
@@ -64,10 +143,10 @@ for (i in 1:length(dir.tree)){
 
 # Create a multidata with the ocurrences files created before.
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/")
+setwd("~/Documentos/Omar/Result_TesisOmar/Final2/")
 
 dir.data <-(dir()[grep(".matrix",dir())])
-dir.data <- dir.data[-grep(".matrix~",dir.data)]
+#dir.data <- dir.data[-grep(".matrix~",dir.data)]
 
 dir.data <- dir.data[c(1,3)]
 
@@ -196,11 +275,11 @@ for(aa in 1:length(perc.rem)){
         dist2 <- t(dist2)
         
         if (is.numeric(dist2[1,1])==F){
-      
-         dist2 <- toNum(dist2)
-      
+          
+          dist2 <- toNum(dist2)
+          
         }
-    
+        
         # Put the species' names as column names
         colnames(dist2) <- sp 
         
@@ -225,9 +304,11 @@ for(aa in 1:length(perc.rem)){
           pd.origin[[j]] <- pd.origin[[j]] + pd}
         
         #AvDT calculation
+        distRoot <- avtd.root(Phylo = multi.phylo[[i]],Dist = dist2)
+        
         tree.dist <- cophenetic.phylo(multi.phylo[[i]])
         
-        avdt <- taxondive(comm = dist2, dis = tree.dist)
+        avdt <- taxondive(comm = distRoot, dis = tree.dist)
         
         avdt2 <- data.frame(Species=avdt$Species,
                             D=avdt$D,
@@ -292,11 +373,11 @@ pd.val <- 0
 avtd.val <- 0
 
 for (i in 1:length(sec2)){
-
+  
   td.val <- rbind(td.val,dt.sum[[sec2[i]]][[1]])
   pd.val <- rbind(pd.val,pd.sum[[sec2[i]]][[1]])
   avtd.val <- rbind(avtd.val,avdt.sum[[sec2[i]]][[1]])
-
+  
 }
 
 end1 <- cbind(td.val,pd.val,avtd.val)
@@ -347,7 +428,7 @@ head(end2,5L)
 
 ############################################################################
 
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/May18/Endemic/")
+setwd("~/Documentos/Omar/Result_TesisOmar/Final2/Endemic/")
 
 write.table(end1,"Area.end", quote = F, row.names = F, col.names = T, sep = ",")
 write.table(end2,"Grid.end", quote = F, row.names = F, col.names = T, sep = ",")
