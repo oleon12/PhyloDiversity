@@ -206,10 +206,10 @@ pd.origin <- list()
 avtd.origin <- list()
 
 
-
-
-
 for (i in 1:length(multi.phylo)){
+  
+   print(paste(paste("Phylogeny", i, sep=" "), paste("from", length(multi.phylo), sep=" "), sep=" "))
+  
   # And for each distribution data
   for(j in 1:length(multi.data)){
     # Both data have the same species ? Extrac from the data distribution only the species shared with the phylogeny
