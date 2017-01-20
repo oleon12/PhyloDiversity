@@ -56,7 +56,7 @@ r1$Cells <- index.grid$Cells ##
 for(i in 2:length(colnames(index.grid))){
   ## Made the quatiles range
   
-  ind2 <- index.grid[-which(index.grid[,i]==0),i]
+  ind2 <- index.grid[which(index.grid[,i]>0.000000),i]
   
   brks <- classIntervals(ind2,n=5,style = "quantile")
   brks <- brks$brks
