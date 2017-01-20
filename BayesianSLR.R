@@ -1,202 +1,91 @@
-setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
-
-AllInd <- read.csv("AllIndex_Table.csv")
+library(maptools)
 
 
-head(AllInd, 5L)
+## Set working directory
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/")
 
-setwd("~/Documentos/Omar/Literature/Statistics/kruschke/")
+## Read the absence/presence tables for the total richness
 
+grid.rich <- read.csv("grid_25g.dist.matrix")
 
-fileNameRoot="SimpleLinearRegressionJags" # for constructing output filenames
-source("openGraphSaveGraph.R")
-source("plotPost.R")
-require(rjags)         # Kruschke, J. K. (2011). Doing Bayesian Data Analysis:
-# A Tutorial with R and BUGS. Academic Press / Elsevier.
-#------------------------------------------------------------------------------
-# THE MODEL.
-modelstring = "
-model {
-for( i in 1 : Ndata ) {
-y[i] ~ dnorm( mu[i] , tau )
-mu[i] <- beta0 + beta1 * x[i]
-}
-beta0 ~ dnorm( 0 , 1.0E-12 )
-beta1 ~ dnorm( 0 , 1.0E-12 )
-tau ~ dgamma( 0.001 , 0.001 )
-}
-" 
-# close quote for modelstring
-writeLines(modelstring,con="model.txt")
+## Create two vectors where the total richness will are
 
-#------------------------------------------------------------------------------
-# THE DATA.
+grid.t.rich <- c()
 
-nSubj = NROW(AllInd)
-x = AllInd$f.Rich
-y = AllInd$DT
-# Re-center data at mean, to reduce autocorrelation in MCMC sampling.
-# Standardize (divide by SD) to make initialization easier.
-xM = mean( x ) ; xSD = sd( x )
-yM = mean( y ) ; ySD = sd( y )
-zx = ( x - xM ) / xSD
-zy = ( y - yM ) / ySD
+## Make the summatory of the richness (This could be made by a apply function, check it later)
 
-# Specify data, as a list.
-dataList = list(
-  x = zx ,
-  y = zy ,
-  Ndata = nSubj
-)
+grid.zero <- c()
 
-#------------------------------------------------------------------------------
-# INTIALIZE THE CHAINS.
-
-r = cor(x,y)
-initsList = list(
-  beta0 = 0 ,    # because data are standardized
-  beta1 = r ,        # because data are standardized
-  tau = 1 / (1-r^2)  # because data are standardized
-)
-
-#------------------------------------------------------------------------------
-# RUN THE CHAINS
-
-parameters = c("beta0" , "beta1" , "tau")  # The parameter(s) to be monitored.
-adaptSteps = 500              # Number of steps to "tune" the samplers.
-burnInSteps = 500            # Number of steps to "burn-in" the samplers.
-nChains = 3                   # Number of chains to run.
-numSavedSteps=50000           # Total number of steps in chains to save.
-thinSteps=1                   # Number of steps to "thin" (1=keep every step).
-nPerChain = ceiling( ( numSavedSteps * thinSteps ) / nChains ) # Steps per chain.
-
-# Create, initialize, and adapt the model:
-jagsModel = jags.model( "model.txt" , data=dataList , inits=initsList ,
-                            n.chains=nChains , n.adapt=adaptSteps )
-
-
-
-# Burn-in:
-cat( "Burning in the MCMC chain...\n" )
-update( jagsModel , n.iter=burnInSteps )
-# The saved MCMC chain:
-cat( "Sampling final MCMC chain...\n" )
-codaSamples = coda.samples( jagsModel , variable.names=parameters , 
-                            n.iter=nPerChain , thin=thinSteps )
-
-str(codaSamples)
-
-head(codaSamples[[1]])
-
-# resulting codaSamples object has these indices: 
-#   codaSamples[[ chainIdx ]][ stepIdx , paramIdx ]
-
-#------------------------------------------------------------------------------
-# EXAMINE THE RESULTS
-
-checkConvergence = FALSE
-if ( checkConvergence ) {
-  openGraph(width=7,height=7)
-  autocorr.plot( codaSamples[[1]] , ask=FALSE ) 
-  show( gelman.diag( codaSamples ) )
-  effectiveChainLength = effectiveSize( codaSamples ) 
-  show( effectiveChainLength )
+for(i in 2:length(colnames(grid.rich))){
+  total <- sum(grid.rich[,i])
+  grid.t.rich[i] <- total
+  
+  if(total==0){
+    grid.zero <- c(grid.zero, colnames(grid.rich)[i])
+  }
 }
 
-# Convert coda-object codaSamples to matrix object for easier handling.
-# But note that this concatenates the different chains into one long chain.
-# Result is mcmcChain[ stepIdx , paramIdx ]
-mcmcChain = as.matrix( codaSamples )
-
-head(mcmcChain)
-
-# Extract chain values:
-z0 = mcmcChain[, "beta0" ]
-z1 = mcmcChain[, "beta1" ]
-zTau = mcmcChain[, "tau" ]
-zSigma = 1 / sqrt( zTau ) # Convert precision to SD
-
-# Convert to original scale:
-b1 = z1 * ySD / xSD
-b0 = ( z0 * ySD + yM - z1 * ySD * xM / xSD )
-sigma = zSigma * ySD
-
-# Posterior prediction:
-# Specify x values for which predicted y's are needed:
-xPostPred = seq(55,80,1)
-# Define matrix for recording posterior predicted y values at each x value.
-# One row per x value, with each row holding random predicted y values.
-postSampSize = length(b1)
-yPostPred = matrix( 0 , nrow=length(xPostPred) , ncol=postSampSize )
-# Define matrix for recording HDI limits of posterior predicted y values:
-yHDIlim = matrix( 0 , nrow=length(xPostPred) , ncol=2 )
-# Generate posterior predicted y values.
-# This gets only one y value, at each x, for each step in the chain.
-for ( chainIdx in 1:postSampSize ) {
-  yPostPred[,chainIdx] = rnorm( length(xPostPred) ,
-                                mean = b0[chainIdx] + b1[chainIdx] * xPostPred ,
-                                sd = rep( sigma[chainIdx] , length(xPostPred) ) )
-}
+grid.t.rich <- grid.t.rich[-1]
 
 
-source("HDIofMCMC.R")
-for ( xIdx in 1:length(xPostPred) ) {
-  yHDIlim[xIdx,] = HDIofMCMC( yPostPred[xIdx,] )
-}
+# Check the results
+
+grid.t.rich
 
 
-# Display the posterior of the b1:
-openGraph(10,4)
-par( mar=c(4,4,1,1)+0.1 , mgp=c(2.5,0.8,0) )
-layout( matrix(1:2,nrow=1) )
-histInfo = plotPost( z1 , xlab="\nStandardized slope PR ~ TD"  )
-histInfo = plotPost( b1 , xlab="Slope (pounds per inch)"  )
-saveGraph(file=paste(fileNameRoot,"PostSlope",sep=""),type="eps")
+###################################################################################
 
-# Display data with believable regression lines and posterior predictions.
-openGraph()
-par( mar=c(3,3,2,1)+0.5 , mgp=c(2.1,0.8,0) )
-# Plot data values:
-xRang = max(x)-min(x)
-yRang = max(y)-min(y)
-limMult = 0.25
-xLim= c( min(x)-limMult*xRang , max(x)+limMult*xRang )
-yLim= c( min(y)-limMult*yRang , max(y)+limMult*yRang )
-plot( x , y , cex=1.5 , lwd=2 , col="black" , xlim=xLim , ylim=yLim ,
-      xlab="Phylogenetic Richness" , ylab="TD" , cex.lab=1.5 ,
-      cex.main=1.33  )
-# Superimpose a smattering of believable regression lines:
-for ( i in seq(from=1,to=length(b0),length=50) ) {
-  abline( b0[i] , b1[i] , col="skyblue" )
-}
-saveGraph(file=paste(fileNameRoot,"DataLines",sep=""),type="eps")
+setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
-#------------------------------------------------------------------------------
+index.grid <- data.frame(Cell.Grid=read.csv("DT.grid25")$area,
+                         TD=read.csv("DT.grid25")$W,
+                         TDs=read.csv("DT.grid25")$Ws,
+                         TDe=read.csv("DT.grid25")$We,
+                         TDse=read.csv("DT.grid25")$Wse,
+                         PD=read.csv("PD.grid25")$PD,
+                         AvTD=read.csv("AvTD.grid25")$Dplus,
+                         f.Rich=read.csv("DT.grid25")$rich,
+                         t.Rich=grid.t.rich)
+
+head(index.grid)
+
+CellClass <- read.csv("AllIndices_Quantiles.csv", header = T)
+
+head(CellClass)
+
+index.grid <- cbind(index.grid,CellClass)
+
+str(index.grid)
+
+
+BayesSlope(x = index.grid$t.Rich, y=index.grid$TD, nSubj = length(index.grid[,1]), 
+           ploting = T, SaveName = "tRichVsTD", Xlab = "Richness ~ TD")
+
+Q5pos <- which(index.grid$TDclass=="Q5")
+
+BayesSlope(x = index.grid$t.Rich[Q5pos], y=index.grid$TD[Q5pos], 
+           nSubj = length(Q5pos), 
+           ploting = T, SaveName = "Q5tRichVsTD", Xlab = "Q5 Richness ~ TD")
+
+BayesSlope(x = index.grid$t.Rich[-Q5pos], y=index.grid$TD[-Q5pos], 
+           nSubj = length(which(index.grid$TDclass=="Non-Q5")), 
+           ploting = T, SaveName = "NonQ5tRichVsTD", Xlab = "Non-Q5 Richness ~ TD")
 
 library(ggplot2)
 
 setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
-ggplot(data = AllInd)+
-  geom_point(aes(x=log(t.Rich),y=log(DT), colour="TD"))+
-  geom_point(aes(x=log(t.Rich),y=log(PD), colour="PD"))+
-  geom_point(aes(x=log(t.Rich),y=log(AvDT), colour="AvTD"))+
-  geom_abline(slope = 0.973, intercept = .2, colour= "blue")+
-  geom_abline(slope = 0.67, intercept = -.5, colour="green")+
-  geom_abline(slope = 0.53, intercept =  -2, colour="red")
-
-
-
-TDcor <- ggplot(data = AllInd)+
-  geom_point(aes(x=log(t.Rich),y=log(DT)))+
-  geom_abline(aes(slope = 1, intercept = 0, colour="Expected"), size=1)+
-  geom_abline(aes(slope = .97, intercept= 0, colour="TR"), size=1)+
-  geom_abline(aes(slope=.99, intercept = 0, colour= "PR"), size=1)+
-  xlab("log Richness")+ylab("log TD")+
-  geom_text(aes(x=5,y=.4),label="Slope PR = 0.99", size=10)+
-  geom_text(aes(x=5,y=0),label="Slope TR = 0.97", size=10)+
+TDcor <- ggplot(data = index.grid)+
+  geom_point(aes(x=log(t.Rich),y=log(TD), colour=TDclass))+
+  geom_abline(aes(slope = .98, intercept = 0, colour="All"), size=1)+
+  geom_abline(aes(slope = .91, intercept= 0, colour="Q5"), size=1)+
+  geom_abline(aes(slope=.97, intercept = 0, colour= "Non-Q5"), size=1)+
+  xlab("log Total Richness")+ylab("log TD")+
+  geom_text(aes(x=5,y=.8),label="Slope All = 0.99", size=7)+
+  geom_text(aes(x=5,y=0),label="Slope Non-Q5 = 0.97", size=7)+
+  geom_text(aes(x=5,y=.4),label="Slope Q5 = 0.91", size=7)+
   scale_color_discrete(name="Slopes")+
-  theme(legend.position=c(.8,.3),
+  theme(legend.position=c(.8,.35),
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
@@ -208,20 +97,41 @@ TDcor <- ggplot(data = AllInd)+
   guides(colour = guide_legend(override.aes = list(size=2)))
 
 
-png("TD_Corr.png", width =2000 , height =1200 ,res = 200)
+png("TDvsTR_Corr.png", width =2000 , height =1200 ,res = 200)
 TDcor
 dev.off()
 
-PDcor <- ggplot(data = AllInd)+
-  geom_point(aes(x=log(t.Rich),y=log(PD)))+
-  geom_abline(aes(slope = 1, intercept = 0, colour="Expected"), size=1)+
-  geom_abline(aes(slope = .67, intercept=0, colour="TR"), size=1)+
-  geom_abline(aes(slope=.65, intercept = 0, colour= "PR"), size=1)+
-  xlab("log Richness")+ylab("log PD")+
-  geom_text(aes(x=5,y=-4.3),label="Slope PR = 0.65", size=10)+
-  geom_text(aes(x=5,y=-5),label="Slope TR = 0.67", size=10)+
+###
+###
+
+BayesSlope(x = index.grid$f.Rich, y=index.grid$TD, nSubj = length(index.grid[,1]), 
+           ploting = T, SaveName = "fRichVsTD", Xlab = "Richness ~ TD")
+
+Q5pos <- which(index.grid$TDclass=="Q5")
+
+BayesSlope(x = index.grid$f.Rich[Q5pos], y=index.grid$TD[Q5pos], 
+           nSubj = length(Q5pos), 
+           ploting = T, SaveName = "Q5fRichVsTD", Xlab = "Q5 Richness ~ TD")
+
+BayesSlope(x = index.grid$f.Rich[-Q5pos], y=index.grid$TD[-Q5pos], 
+           nSubj = length(which(index.grid$TDclass=="Non-Q5")), 
+           ploting = T, SaveName = "NonQ5fRichVsTD", Xlab = "Non-Q5 Richness ~ TD")
+
+library(ggplot2)
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
+
+TDcor <- ggplot(data = index.grid)+
+  geom_point(aes(x=log(f.Rich),y=log(TD), colour=TDclass))+
+  geom_abline(aes(slope = .99, intercept = 0, colour="All"), size=1)+
+  geom_abline(aes(slope = .97, intercept= 0, colour="Q5"), size=1)+
+  geom_abline(aes(slope=.98, intercept = 0, colour= "Non-Q5"), size=1)+
+  xlab("log Phylogenetic Richness")+ylab("log TD")+
+  geom_text(aes(x=5,y=.8),label="Slope All = 0.99", size=7)+
+  geom_text(aes(x=5,y=0),label="Slope Non-Q5 = 0.98", size=7)+
+  geom_text(aes(x=5,y=.4),label="Slope Q5 = 0.97", size=7)+
   scale_color_discrete(name="Slopes")+
-  theme(legend.position=c(.8,.3),
+  theme(legend.position=c(.8,.35),
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
@@ -233,20 +143,135 @@ PDcor <- ggplot(data = AllInd)+
   guides(colour = guide_legend(override.aes = list(size=2)))
 
 
-png("PD_Corr.png", width =2000 , height =1200 ,res = 200)
+png("TDvsPR_Corr.png", width =2000 , height =1200 ,res = 200)
+TDcor
+dev.off()
+
+
+#####################################################################################
+#####################################################################################
+#####################################################################################
+
+BayesSlope(x = index.grid$t.Rich, y=index.grid$PD, nSubj = length(index.grid[,1]), 
+           ploting = T, SaveName = "tRichVsPD", Xlab = "Richness ~ PD")
+
+Q5pos <- which(index.grid$PDclass=="Q5")
+
+BayesSlope(x = index.grid$t.Rich[Q5pos], y=index.grid$PD[Q5pos], 
+           nSubj = length(Q5pos), 
+           ploting = T, SaveName = "Q5tRichVsPD", Xlab = "Q5 Richness ~ PD")
+
+BayesSlope(x = index.grid$t.Rich[-Q5pos], y=index.grid$PD[-Q5pos], 
+           nSubj = length(which(index.grid$PDclass=="Non-Q5")), 
+           ploting = T, SaveName = "NonQ5tRichvsPD", Xlab = "Non-Q5 Richness ~ PD")
+
+library(ggplot2)
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
+
+PDcor <- ggplot(data = index.grid)+
+  geom_point(aes(x=log(t.Rich),y=log(PD), colour=PDclass))+
+  geom_abline(aes(slope = .77, intercept = 0, colour="All"), size=1)+
+  geom_abline(aes(slope = .43, intercept= 0, colour="Q5"), size=1)+
+  geom_abline(aes(slope=.93, intercept = 0, colour= "Non-Q5"), size=1)+
+  xlab("log Total Richness")+ylab("log PD")+
+  geom_text(aes(x=5,y=-3.5),label="Slope All = 0.77", size=7)+
+  geom_text(aes(x=5,y=-4.3),label="Slope Non-Q5 = 0.93", size=7)+
+  geom_text(aes(x=5,y=-5),label="Slope Q5 = 0.43", size=7)+
+  scale_color_discrete(name="Slopes")+
+  theme(legend.position=c(.8,.37),
+        legend.title=element_text(size = 30,face = "bold"),
+        legend.text = element_text(size = 30),
+        legend.key.size = unit(1, "cm"),
+        legend.key = element_rect(fill= "white",colour="black"),
+        axis.text.y=element_text(size=15),
+        axis.text.x=element_blank(),
+        axis.title.y=element_text(size=30),
+        axis.title.x=element_blank())+  
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
+
+png("PDvsTR_Corr.png", width =2000 , height =1200 ,res = 200)
 PDcor
 dev.off()
 
-AvTDcor <- ggplot(data = AllInd)+
-  geom_point(aes(x=log(t.Rich),y=log(AvDT)))+
-  geom_abline(aes(slope = 1, intercept = 0, colour="Expected"), size=1)+
-  geom_abline(aes(slope = .53, intercept=0, colour="TR"), size=1)+
-  geom_abline(aes(slope=.55, intercept = 0, colour= "PR"), size=1)+
-  xlab("log Richness")+ylab("log AvTD")+
-  geom_text(aes(x=5,y=-5.3),label="Slope PR = 0.55", size=10)+
-  geom_text(aes(x=5,y=-6),label="Slope TR = 0.53", size=10)+
+###
+###
+
+BayesSlope(x = index.grid$f.Rich, y=index.grid$PD, nSubj = length(index.grid[,1]), 
+           ploting = T, SaveName = "fRichVsPD", Xlab = "Richness ~ PD")
+
+Q5pos <- which(index.grid$PDclass=="Q5")
+
+BayesSlope(x = index.grid$f.Rich[Q5pos], y=index.grid$PD[Q5pos], 
+           nSubj = length(Q5pos), 
+           ploting = T, SaveName = "Q5fRichVsPD", Xlab = "Q5 Richness ~ PD")
+
+BayesSlope(x = index.grid$f.Rich[-Q5pos], y=index.grid$PD[-Q5pos], 
+           nSubj = length(which(index.grid$PDclass=="Non-Q5")), 
+           ploting = T, SaveName = "NonQ5fRichVsPD", Xlab = "Non-Q5 Richness ~ PD")
+
+library(ggplot2)
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
+
+PDcor <- ggplot(data = index.grid)+
+  geom_point(aes(x=log(f.Rich),y=log(PD), colour=PDclass))+
+  geom_abline(aes(slope = .75, intercept = 0, colour="All"), size=1)+
+  geom_abline(aes(slope = .45, intercept= 0, colour="Q5"), size=1)+
+  geom_abline(aes(slope=.96, intercept = 0, colour= "Non-Q5"), size=1)+
+  xlab("log Total Richness")+ylab("log PD")+
+  geom_text(aes(x=4.5,y=-3.5),label="Slope All = 0.75", size=7)+
+  geom_text(aes(x=4.5,y=-4.3),label="Slope Non-Q5 = 0.96", size=7)+
+  geom_text(aes(x=4.5,y=-5),label="Slope Q5 = 0.45", size=7)+
   scale_color_discrete(name="Slopes")+
-  theme(legend.position=c(.8,.3),
+  theme(legend.position=c(.8,.37),
+        legend.title=element_text(size = 30,face = "bold"),
+        legend.text = element_text(size = 30),
+        legend.key.size = unit(1, "cm"),
+        legend.key = element_rect(fill= "white",colour="black"),
+        axis.text.y=element_text(size=15),
+        axis.text.x=element_blank(),
+        axis.title.y=element_text(size=30),
+        axis.title.x=element_blank())+  
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
+png("PDvsPR_Corr.png", width =2000 , height =1200 ,res = 200)
+PDcor
+dev.off()
+
+#####################################################################################
+#####################################################################################
+#####################################################################################
+
+BayesSlope(x = index.grid$t.Rich, y=index.grid$AvTD, nSubj = length(index.grid[,1]), 
+           ploting = T, SaveName = "tRichVsAvTD", Xlab = "Richness ~ AvTD")
+
+Q5pos <- which(index.grid$AvTDclass=="Q5")
+
+BayesSlope(x = index.grid$t.Rich[Q5pos], y=index.grid$AvTD[Q5pos], 
+           nSubj = length(Q5pos), 
+           ploting = T, SaveName = "Q5tRichVsAvTD", Xlab = "Q5 Richness ~ AvTD")
+
+BayesSlope(x = index.grid$t.Rich[-Q5pos], y=index.grid$AvTD[-Q5pos], 
+           nSubj = length(which(index.grid$AvTDclass=="Non-Q5")), 
+           ploting = T, SaveName = "NonQ5tRichvsAvTD", Xlab = "Non-Q5 Richness ~ AvTD")
+
+library(ggplot2)
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
+
+AvTDcor <- ggplot(data = index.grid)+
+  geom_point(aes(x=log(t.Rich),y=log(AvTD), colour=AvTDclass))+
+  geom_abline(aes(slope = .41, intercept = 0, colour="All"), size=1)+
+  geom_abline(aes(slope = .34, intercept= 0, colour="Q5"), size=1)+
+  geom_abline(aes(slope=.84, intercept = 0, colour= "Non-Q5"), size=1)+
+  xlab("log Total Richness")+ylab("log AvTD")+
+  geom_text(aes(x=5,y=-3.2),label="Slope All = 0.41", size=7)+
+  geom_text(aes(x=5,y=-4.2),label="Slope Non-Q5 = 0.84", size=7)+
+  geom_text(aes(x=5,y=-5),label="Slope Q5 = 0.34", size=7)+
+  scale_color_discrete(name="Slopes")+
+  theme(legend.position=c(.8,.36),
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
@@ -258,6 +283,66 @@ AvTDcor <- ggplot(data = AllInd)+
   guides(colour = guide_legend(override.aes = list(size=2)))
 
 
-png("AvTD_Corr.png", width =2000 , height =1300 ,res = 200)
+png("AvTDvsTR_Corr.png", width =2000 , height =1200 ,res = 200)
 AvTDcor
 dev.off()
+
+###
+###
+
+BayesSlope(x = index.grid$f.Rich, y=index.grid$AvTD, nSubj = length(index.grid[,1]), 
+           ploting = T, SaveName = "fRichVsAvTD", Xlab = "Richness ~ AvTD")
+
+Q5pos <- which(index.grid$AvTDclass=="Q5")
+
+BayesSlope(x = index.grid$f.Rich[Q5pos], y=index.grid$AvTD[Q5pos], 
+           nSubj = length(Q5pos), 
+           ploting = T, SaveName = "Q5fRichVsAvTD", Xlab = "Q5 Richness ~ AvTD")
+
+BayesSlope(x = index.grid$f.Rich[-Q5pos], y=index.grid$AvTD[-Q5pos], 
+           nSubj = length(which(index.grid$AvTDclass=="Non-Q5")), 
+           ploting = T, SaveName = "NonQ5fRichVsAvTD", Xlab = "Non-Q5 Richness ~ AvTD")
+
+library(ggplot2)
+
+setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
+
+AvTDcor <- ggplot(data = index.grid)+
+  geom_point(aes(x=log(f.Rich),y=log(AvTD), colour=AvTDclass))+
+  geom_abline(aes(slope = .38, intercept = 0, colour="All"), size=1)+
+  geom_abline(aes(slope = .27, intercept= 0, colour="Q5"), size=1)+
+  geom_abline(aes(slope=.88, intercept = 0, colour= "Non-Q5"), size=1)+
+  xlab("log Phylogenetic Richness")+ylab("log AvTD")+
+  geom_text(aes(x=5,y=-3.2),label="Slope All = 0.38", size=7)+
+  geom_text(aes(x=5,y=-4.2),label="Slope Non-Q5 = 0.88", size=7)+
+  geom_text(aes(x=5,y=-5),label="Slope Q5 = 0.27", size=7)+
+  scale_color_discrete(name="Slopes")+
+  theme(legend.position=c(.8,.36),
+        legend.title=element_text(size = 30,face = "bold"),
+        legend.text = element_text(size = 30),
+        legend.key.size = unit(1, "cm"),
+        legend.key = element_rect(fill= "white",colour="black"),
+        axis.text.y=element_text(size=15),
+        axis.text.x=element_text(size=15),
+        axis.title.y=element_text(size=30),
+        axis.title.x=element_text(size=30))+  
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
+png("AvTDvsPR_Corr.png", width =2000 , height =1200 ,res = 200)
+AvTDcor
+dev.off()
+
+######################################################################################
+######################################################################################
+
+BayesSlope(x = index.grid$TD, y=index.grid$PD, nSubj = length(index.grid[,1]), 
+           ploting = T, SaveName = "TDvsPD", Xlab = "TD ~ PD")
+
+BayesSlope(x = index.grid$TD, y=index.grid$AvTD, nSubj = length(index.grid[,1]), 
+           ploting = T, SaveName = "TDvsAvTD", Xlab = "TD ~ AvTD")
+
+BayesSlope(x = index.grid$PD, y=index.grid$AvTD, nSubj = length(index.grid[,1]), 
+           ploting = T, SaveName = "PDvsAvTD", Xlab = "PD ~ AvTD")
+
+######################################################################################
+######################################################################################
