@@ -19,7 +19,7 @@ x <- x$Dplus
 
 x
 
-x2 <- x[-grep(0,x)]
+x2 <- x[which(x>0.000000)]
 
 brks <- classIntervals(x2,n=5,style = "quantile")
 brks <- brks$brks
@@ -89,9 +89,9 @@ dist3 <- dist2[grep("Q5",rownames(dist2)), grep("Q5", colnames(dist2))]
 
 SumQ5 <- apply(dist3, 2, sum)
 
-SumQ5
+SumQ5 <- SumQ5/length(dist3[,1])
 
-brks2 <- classIntervals(SumQ5,n=5,style = "quantile")
+brks2 <- classIntervals(SumQ5,n=4,style = "quantile")
 brks2 <- brks2$brks
 
 brks2
