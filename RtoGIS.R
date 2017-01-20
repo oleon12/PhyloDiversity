@@ -180,7 +180,7 @@ grid$Index <- ClassTD2
 
 setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
-writePolyShape(grid,fn = "Grid25_AvTD")
+writePolyShape(grid,fn = "Grid25_TD")
 
 
 ######################################################################
