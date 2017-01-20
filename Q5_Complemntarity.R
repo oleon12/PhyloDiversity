@@ -19,7 +19,7 @@ x <- x$Dplus
 
 x
 
-x2 <- x[-grep(0,x)]
+x2 <- x[which(x>0.000000)]
 
 brks <- classIntervals(x2,n=5,style = "quantile")
 brks <- brks$brks
