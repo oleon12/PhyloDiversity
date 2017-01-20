@@ -3,11 +3,15 @@ library(vegan)
 library(shapefiles)
 library(maptools)
 library(Imap)
+library(classInt)
 
 ## Go to the work directory where are the shape poly 
 setwd("/home/omar/Documentos/Omar/Tesis/Scripts/Distribution/shp/Grid/")
 # Read the shape file
 grid <- readShapePoly("grid_25g.shp")
+
+grid2 <- read.shp("grid_25g.shp")
+
 #
 # Now, go to the directory where are the index results
 setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
@@ -117,7 +121,7 @@ rawGrid3 <- rawGrid
 
 rownames(rawGrid3) <- class
 
-Q5CC.Grid <- rawGrid3[c(grep("Q5",class),grep("CI.1",class)),]
+Q5CC.Grid <- rawGrid3[-grep("NO",class),]
 
 rownames(Q5CC.Grid)
 
@@ -185,7 +189,7 @@ head(CoordGrid)
 
 UniqValData <- as.matrix(UniqVal)
 
-Q5CC.Uniq <- as.matrix(UniqValData[c(grep("Q5",class),grep("CI.1",class)),])
+Q5CC.Uniq <- as.matrix(UniqValData[-grep("NO",class),])
 
 length(Q5CC.Uniq[,1])
 
@@ -205,9 +209,9 @@ mantel(CoordDist,IndDist)
 mantel(IndDist, CoordDist)
 
 
-CoorDist2 <- CoordDist[grep("CI.1",rownames(CoordDist)),grep("Q5",colnames(CoordDist))]
+CoorDist2 <- CoordDist[,grep("Q5",colnames(CoordDist))]
 
-IndDist2 <- IndDist[grep("CI.1",rownames(IndDist)),grep("Q5",colnames(IndDist))]
+IndDist2 <- IndDist[,grep("Q5",colnames(IndDist))]
 
 length(CoorDist2[,1])
 length(IndDist2[,1])
@@ -215,14 +219,14 @@ length(IndDist2[,1])
 
 PostBayesSlope <- c()
 
-for(i in 134:length(colnames(CoorDist2))){
+for(i in 1:length(colnames(CoorDist2))){
   
   print(paste(paste("Iteration",i,sep = " "), paste("of", length(colnames(CoorDist2)), sep=" "),sep=" "))
   
-  PBS <- BayesSlope(x = CoorDist2[,i], y= IndDist2[,i], nSubj = length(IndDist2[,1]))
+  PBS <- BayesSlope(x = CoorDist2[,i], y= IndDist2[,i], nSubj = length(IndDist2[,1]), ploting = F)
   
   PostBayesSlope <- c(PostBayesSlope, PBS)
-
+  
 }
 
 PostBayesSlope
@@ -239,20 +243,11 @@ rawGrid3 <- rawGrid
 
 rownames(rawGrid3) <- class
 
-Q5CC.Grid <- rawGrid3[c(grep("Q5",class),grep("CI.1",class)),]
+Q5CC.Grid <- rawGrid3[-grep("NO",class),]
 
 rownames(Q5CC.Grid)
 
 #########################################################################
-
-modulus <- function(Val1, Val2){
-  
-  t1<-floor(Val1/Val2)
-  return(Val1-t1*Val2)
-  
-  
-}
-
 
 CoordGrid <- matrix(0, ncol = 2, nrow = length(grid$ID))
 colnames(CoordGrid) <- c("X","Y")
@@ -273,7 +268,7 @@ tail(CoordGrid)
 ####################################################
 
 
-Q5CC.Uniq <- as.matrix(CoordGrid[c(grep("Q5",class),grep("CI.1",class)),])
+Q5CC.Uniq <- as.matrix(CoordGrid[-grep("NO",class),])
 
 length(Q5CC.Uniq[,1])
 
@@ -313,16 +308,16 @@ mantel(CoordDist,IndDist)
 
 mantel(IndDist, CoordDist)
 
-CoorDist2 <- CoordDist[grep("CI.1",rownames(CoordDist)),grep("Q5",colnames(CoordDist))]
+CoorDist2 <- CoordDist[ ,grep("Q5",colnames(CoordDist))]
 
-IndDist2 <- IndDist[grep("CI.1",rownames(IndDist)),grep("Q5",colnames(IndDist))]
+IndDist2 <- IndDist[ ,grep("Q5",colnames(IndDist))]
 
 length(CoorDist2[,1])
 length(IndDist2[,1])
 
 PostBayesSlope2 <- c()
 
-for(i in 134:length(colnames(CoorDist2))){
+for(i in 1:length(colnames(CoorDist2))){
   
   print(paste(paste("Iteration",i,sep = " "), paste("of", length(colnames(CoorDist2)), sep=" "),sep=" "))
   
@@ -340,12 +335,12 @@ hist(PostBayesSlope2)
 
 setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
-png("CIvsDist.png", width = 1500, height = 800)
+png("CIvsDist.png", width = 1000, height = 800)
 ggplot()+geom_histogram(aes(PostBayesSlope2))+
-         ylab(NULL)+xlab("Posterior Slope Means")+
-         geom_text(aes(.25,15), label=paste("Mean",round(mean(PostBayesSlope2),digits=3),sep = ": "), size=15)+
-         geom_text(aes(.25,14), label=paste("Max",round(max(PostBayesSlope2),digits=3),sep = ": "), size=15)+
-         geom_text(aes(.25,13), label=paste("Min",round(min(PostBayesSlope2),digits=3),sep = ": "), size=15)+
+  ylab(NULL)+xlab("Posterior Slope Means")+
+  geom_text(aes(.05,16), label=paste("Mean",round(mean(PostBayesSlope2),digits=3),sep = ": "), size=15)+
+  geom_text(aes(.05,14), label=paste("Max",round(max(PostBayesSlope2),digits=3),sep = ": "), size=15)+
+  geom_text(aes(.05,12), label=paste("Min",round(min(PostBayesSlope2),digits=3),sep = ": "), size=15)+
   theme(axis.text.x=element_text(size=30),
         axis.text.y=element_text(size=30),
         axis.ticks=element_blank(),
