@@ -1,9 +1,10 @@
-BayesSlope <- function(x,y,nSubj,ploting=c(TRUE,FALSE),SaveName){
+BayesSlope <- function(x,y,nSubj,ploting=c(TRUE,FALSE),SaveName, Xlab){
   
   #########################
   setwd("~/Documentos/Omar/Literature/Statistics/kruschke/")
   
   source("plotPost.R")
+  source("openGraphSaveGraph.R")
   require(rjags)
   #########################
   
@@ -130,15 +131,17 @@ BayesSlope <- function(x,y,nSubj,ploting=c(TRUE,FALSE),SaveName){
   
   #####################################################################
   
-  histInfo = plotPost( z1 )
-  
-  
-  return(histInfo[1])
+  histInfo = plotPost( z1 , xlab = Xlab)
   
   if(ploting==T){
     
-    saveGraph(file=paste(fileNameRoot,SaveName,sep=""),type="eps")
+    setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
+    
+    saveGraph(file=SaveName,type="eps")
   
   }
+  
+  return(histInfo[1])
+  
 }
 
