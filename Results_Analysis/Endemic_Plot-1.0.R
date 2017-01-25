@@ -60,7 +60,7 @@ p + geom_violin(aes(x=as.factor(end$Percentage),y=end$PD)) +
   #geom_point(aes(x=factor(Percentage),y=mean(PD)),colour="red",shape=17,size=4)+
   ylab("PD")+ xlab("Remove %")+
   #ggtitle("Endemic species for areas of endemism (PD)")+
-  scale_color_manual(breaks=ord,values = col)+
+  scale_color_manual(breaks=ord,values = col, name="Areas")+
   theme(panel.background = element_rect(fill = "gray97"))+
   theme(axis.text = element_text(size = 20),
         axis.title.y = element_text(size = 30,),
@@ -92,8 +92,8 @@ p + geom_violin(aes(x=as.factor(end$Percentage),y=end$AvTD)) +
                  colour=plot2$Area), size=7)+
   #geom_point(aes(x=factor(Percentage),y=mean(Values)),colour="red",shape=17,size=4)+
   ylab("AvTD")+ xlab("Remove %")+
-  ggtitle("Endemic species for areas of endemism (AvTD)")+
-  scale_color_manual(breaks=ord,values = col)+
+  #ggtitle("Endemic species for areas of endemism (AvTD)")+
+  scale_color_manual(breaks=ord,values = col, name="Areas")+
   theme(panel.background = element_rect(fill = "gray97"))+
   theme(axis.text = element_text(size = 20),
         axis.title.y = element_text(size = 30,),
@@ -129,7 +129,7 @@ p + geom_violin(aes(x=as.factor(AvTDtmp$Percentage),y=AvTDtmp$AvTD)) +
   #geom_point(aes(x=factor(Percentage),y=mean(Values)),colour="red",shape=17,size=4)+
   ylab("AvTD")+ xlab("Remove %")+
   #ggtitle("Endemic species for Cauca and Paramo (AvTD)")+
-  scale_color_manual(breaks=ord2,values = col2)+
+  scale_color_manual(breaks=ord2,values = col2, name="Areas")+
   theme(panel.background = element_rect(fill = "gray97"))+
   theme(axis.text = element_text(size = 20),
         axis.title.y = element_text(size = 30,),
@@ -171,7 +171,7 @@ p + geom_violin(aes(x=as.factor(AvTDtmp$Percentage),y=AvTDtmp$AvTD)) +
   #geom_point(aes(x=factor(Percentage),y=mean(Values)),colour="red",shape=17,size=4)+
   ylab("AvTD")+ xlab("Remove %")+
   #ggtitle("Endemic species for areas with the lowest values (AvTD)")+
-  scale_color_manual(breaks=ord2,values = col2)+
+  scale_color_manual(breaks=ord2,values = col2, name="Areas")+
   theme(panel.background = element_rect(fill = "gray97"))+
   theme(axis.text = element_text(size = 20),
         axis.title.y = element_text(size = 30,),
@@ -463,5 +463,3 @@ dev.off()
 
 ##################################################################################
 ##################################################################################
-
-
