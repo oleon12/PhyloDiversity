@@ -13,17 +13,17 @@ library(SDMTools)
 setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 # Read the shape file
 grid <- readShapePoly("Grid1_AvTD.shp")
-pos1.Q5 <- grep("Q5", grid$Index)
+pos1.Q5 <- which(grid$Index=="Q5")
 pos1.Q5 <- pos1.Q5 + 1
 grid1 <- read.shp("Grid1_AvTD.shp")
 #
 grid <- readShapePoly("Grid50_AvTD.shp")
-pos50.Q5 <- grep("Q5", grid$Index)
+pos50.Q5 <- which(grid$Index=="Q5")
 pos50.Q5 <- pos50.Q5 + 1
 grid50 <- read.shp("Grid50_AvTD.shp")
 #
 grid <- readShapePoly("Grid25_AvTD.shp")
-pos25.Q5 <- grep("Q5", grid$Index)
+pos25.Q5 <- which(grid$Index=="Q5")
 pos25.Q5 <- pos25.Q5 + 1
 grid25 <- read.shp("Grid25_AvTD.shp")
 #
