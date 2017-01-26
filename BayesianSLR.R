@@ -1,5 +1,5 @@
 library(maptools)
-
+library(ggplot2)
 
 ## Set working directory
 setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/")
@@ -89,7 +89,8 @@ TDcor <- ggplot(data = index.grid)+
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
-        legend.key = element_rect(fill= "white",colour="black"),
+        legend.key = element_rect(fill= NULL,colour="black"),
+        legend.background = element_rect(fill=NA),
         axis.text.y=element_text(size=15),
         axis.text.x=element_blank(),
         axis.title.y=element_text(size=30),
@@ -127,15 +128,16 @@ TDcor <- ggplot(data = index.grid)+
   geom_abline(aes(slope = .97, intercept= 0, colour="Q5"), size=1)+
   geom_abline(aes(slope=.98, intercept = 0, colour= "Non-Q5"), size=1)+
   xlab("log Phylogenetic Richness")+ylab("log TD")+
-  geom_text(aes(x=5,y=.8),label="Slope All = 0.99", size=7)+
-  geom_text(aes(x=5,y=0),label="Slope Non-Q5 = 0.98", size=7)+
-  geom_text(aes(x=5,y=.4),label="Slope Q5 = 0.97", size=7)+
+  geom_text(aes(x=4.5,y=.8),label="Slope All = 0.99", size=7)+
+  geom_text(aes(x=4.5,y=0),label="Slope Non-Q5 = 0.98", size=7)+
+  geom_text(aes(x=4.5,y=.4),label="Slope Q5 = 0.97", size=7)+
   scale_color_discrete(name="Slopes")+
   theme(legend.position=c(.8,.35),
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
-        legend.key = element_rect(fill= "white",colour="black"),
+        legend.key = element_rect(fill= NULL,colour="black"),
+        legend.background = element_rect(fill=NA),
         axis.text.y=element_text(size=15),
         axis.text.x=element_blank(),
         axis.title.y=element_text(size=30),
@@ -183,7 +185,8 @@ PDcor <- ggplot(data = index.grid)+
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
-        legend.key = element_rect(fill= "white",colour="black"),
+        legend.key = element_rect(fill= NULL,colour="black"),
+        legend.background = element_rect(fill=NA),
         axis.text.y=element_text(size=15),
         axis.text.x=element_blank(),
         axis.title.y=element_text(size=30),
@@ -229,7 +232,8 @@ PDcor <- ggplot(data = index.grid)+
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
-        legend.key = element_rect(fill= "white",colour="black"),
+        legend.key = element_rect(fill= NULL,colour="black"),
+        legend.background = element_rect(fill=NA),
         axis.text.y=element_text(size=15),
         axis.text.x=element_blank(),
         axis.title.y=element_text(size=30),
@@ -267,15 +271,16 @@ AvTDcor <- ggplot(data = index.grid)+
   geom_abline(aes(slope = .34, intercept= 0, colour="Q5"), size=1)+
   geom_abline(aes(slope=.84, intercept = 0, colour= "Non-Q5"), size=1)+
   xlab("log Total Richness")+ylab("log AvTD")+
-  geom_text(aes(x=5,y=-3.2),label="Slope All = 0.41", size=7)+
+  geom_text(aes(x=5,y=-3.7),label="Slope All = 0.41", size=7)+
   geom_text(aes(x=5,y=-4.2),label="Slope Non-Q5 = 0.84", size=7)+
-  geom_text(aes(x=5,y=-5),label="Slope Q5 = 0.34", size=7)+
+  geom_text(aes(x=5,y=-4.8),label="Slope Q5 = 0.34", size=7)+
   scale_color_discrete(name="Slopes")+
-  theme(legend.position=c(.8,.36),
+  theme(legend.position=c(.8,.32),
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
-        legend.key = element_rect(fill= "white",colour="black"),
+        legend.key = element_rect(fill= NULL,colour="black"),
+        legend.background = element_rect(fill=NA),
         axis.text.y=element_text(size=15),
         axis.text.x=element_text(size=15),
         axis.title.y=element_text(size=30),
@@ -313,15 +318,16 @@ AvTDcor <- ggplot(data = index.grid)+
   geom_abline(aes(slope = .27, intercept= 0, colour="Q5"), size=1)+
   geom_abline(aes(slope=.88, intercept = 0, colour= "Non-Q5"), size=1)+
   xlab("log Phylogenetic Richness")+ylab("log AvTD")+
-  geom_text(aes(x=5,y=-3.2),label="Slope All = 0.38", size=7)+
-  geom_text(aes(x=5,y=-4.2),label="Slope Non-Q5 = 0.88", size=7)+
-  geom_text(aes(x=5,y=-5),label="Slope Q5 = 0.27", size=7)+
+  geom_text(aes(x=4.5,y=-3.7),label="Slope All = 0.38", size=7)+
+  geom_text(aes(x=4.5,y=-4.2),label="Slope Non-Q5 = 0.88", size=7)+
+  geom_text(aes(x=4.5,y=-4.8),label="Slope Q5 = 0.27", size=7)+
   scale_color_discrete(name="Slopes")+
-  theme(legend.position=c(.8,.36),
+  theme(legend.position=c(.8,.32),
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
-        legend.key = element_rect(fill= "white",colour="black"),
+        legend.key = element_rect(fill= NULL,colour="black"),
+        legend.background = element_rect(fill=NA),
         axis.text.y=element_text(size=15),
         axis.text.x=element_text(size=15),
         axis.title.y=element_text(size=30),
