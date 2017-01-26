@@ -52,7 +52,7 @@ x
 x2 <- x[which(x>0)]
 
 # No, do the quantile clasification, in this case, given the values index, the intervals will be generated
-brks <- classIntervals(x2,n=4,style = "quantile")
+brks <- classIntervals(x2,n=4,style = "jenks")
 brks <- brks$brks
 # Here, the intervarls given the index value
 brks
