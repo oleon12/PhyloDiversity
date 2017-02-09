@@ -92,9 +92,11 @@ TDcor <- ggplot(data = index.grid)+
         legend.key = element_rect(fill= NULL,colour="black"),
         legend.background = element_rect(fill=NA),
         axis.text.y=element_text(size=15),
-        axis.text.x=element_blank(),
+        #axis.text.x=element_blank(),
         axis.title.y=element_text(size=30),
-        axis.title.x=element_blank())+  
+        #axis.title.x=element_blank()
+        axis.text.x=element_text(size=30),
+        axis.title.x=element_text(size = 30))+  
   guides(colour = guide_legend(override.aes = list(size=2)))
 
 
@@ -128,20 +130,22 @@ TDcor <- ggplot(data = index.grid)+
   geom_abline(aes(slope = .97, intercept= 0, colour="Q5"), size=1)+
   geom_abline(aes(slope=.98, intercept = 0, colour= "Non-Q5"), size=1)+
   xlab("log Phylogenetic Richness")+ylab("log TD")+
-  geom_text(aes(x=4.5,y=.8),label="Slope All = 0.99", size=7)+
-  geom_text(aes(x=4.5,y=0),label="Slope Non-Q5 = 0.98", size=7)+
-  geom_text(aes(x=4.5,y=.4),label="Slope Q5 = 0.97", size=7)+
+  geom_text(aes(x=4.5,y=.6),label="Slope All = 0.99", size=7)+
+  geom_text(aes(x=4.5,y=.3),label="Slope Non-Q5 = 0.98", size=7)+
+  geom_text(aes(x=4.5,y=0),label="Slope Q5 = 0.97", size=7)+
   scale_color_discrete(name="Slopes")+
-  theme(legend.position=c(.8,.35),
+  theme(legend.position=c(.8,.32),
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
         legend.key = element_rect(fill= NULL,colour="black"),
         legend.background = element_rect(fill=NA),
         axis.text.y=element_text(size=15),
-        axis.text.x=element_blank(),
+        #axis.text.x=element_blank(),
         axis.title.y=element_text(size=30),
-        axis.title.x=element_blank())+  
+        #axis.title.x=element_blank(),
+        axis.title.x=element_text(size=30),
+        axis.text.x=element_text(size = 15))+  
   guides(colour = guide_legend(override.aes = list(size=2)))
 
 
@@ -223,22 +227,25 @@ PDcor <- ggplot(data = index.grid)+
   geom_abline(aes(slope = .75, intercept = 0, colour="All"), size=1)+
   geom_abline(aes(slope = .45, intercept= 0, colour="Q5"), size=1)+
   geom_abline(aes(slope=.96, intercept = 0, colour= "Non-Q5"), size=1)+
-  xlab("log Total Richness")+ylab("log PD")+
-  geom_text(aes(x=4.5,y=-3.5),label="Slope All = 0.75", size=7)+
-  geom_text(aes(x=4.5,y=-4.3),label="Slope Non-Q5 = 0.96", size=7)+
+  xlab("log Phylogenetic Richness")+ylab("log PD")+
+  geom_text(aes(x=4.5,y=-4.2),label="Slope All = 0.75", size=7)+
+  geom_text(aes(x=4.5,y=-4.6),label="Slope Non-Q5 = 0.96", size=7)+
   geom_text(aes(x=4.5,y=-5),label="Slope Q5 = 0.45", size=7)+
   scale_color_discrete(name="Slopes")+
-  theme(legend.position=c(.8,.37),
+  theme(legend.position=c(.8,.32),
         legend.title=element_text(size = 30,face = "bold"),
         legend.text = element_text(size = 30),
         legend.key.size = unit(1, "cm"),
         legend.key = element_rect(fill= NULL,colour="black"),
         legend.background = element_rect(fill=NA),
         axis.text.y=element_text(size=15),
-        axis.text.x=element_blank(),
+        #axis.text.x=element_blank(),
         axis.title.y=element_text(size=30),
-        axis.title.x=element_blank())+  
+        #axis.title.x=element_blank(),
+        axis.text.x=element_text(size = 15),
+        axis.title.x=element_text(size = 30))+  
   guides(colour = guide_legend(override.aes = list(size=2)))
+
 
 png("PDvsPR_Corr.png", width =2000 , height =1200 ,res = 200)
 PDcor
@@ -271,7 +278,7 @@ AvTDcor <- ggplot(data = index.grid)+
   geom_abline(aes(slope = .34, intercept= 0, colour="Q5"), size=1)+
   geom_abline(aes(slope=.84, intercept = 0, colour= "Non-Q5"), size=1)+
   xlab("log Total Richness")+ylab("log AvTD")+
-  geom_text(aes(x=5,y=-3.7),label="Slope All = 0.41", size=7)+
+  geom_text(aes(x=5,y=-3.6),label="Slope All = 0.41", size=7)+
   geom_text(aes(x=5,y=-4.2),label="Slope Non-Q5 = 0.84", size=7)+
   geom_text(aes(x=5,y=-4.8),label="Slope Q5 = 0.34", size=7)+
   scale_color_discrete(name="Slopes")+
@@ -286,7 +293,6 @@ AvTDcor <- ggplot(data = index.grid)+
         axis.title.y=element_text(size=30),
         axis.title.x=element_text(size=30))+  
   guides(colour = guide_legend(override.aes = list(size=2)))
-
 
 png("AvTDvsTR_Corr.png", width =2000 , height =1200 ,res = 200)
 AvTDcor
@@ -318,7 +324,7 @@ AvTDcor <- ggplot(data = index.grid)+
   geom_abline(aes(slope = .27, intercept= 0, colour="Q5"), size=1)+
   geom_abline(aes(slope=.88, intercept = 0, colour= "Non-Q5"), size=1)+
   xlab("log Phylogenetic Richness")+ylab("log AvTD")+
-  geom_text(aes(x=4.5,y=-3.7),label="Slope All = 0.38", size=7)+
+  geom_text(aes(x=4.5,y=-3.6),label="Slope All = 0.38", size=7)+
   geom_text(aes(x=4.5,y=-4.2),label="Slope Non-Q5 = 0.88", size=7)+
   geom_text(aes(x=4.5,y=-4.8),label="Slope Q5 = 0.27", size=7)+
   scale_color_discrete(name="Slopes")+
