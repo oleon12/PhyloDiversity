@@ -24,7 +24,7 @@ x <- x$Dplus
 x
 # Due to there are many cell without index values (this is beacuse the species distribution)
 # remove the 0 values, or the quantile classification will be biased
-x2 <- x[-grep(0,x)]
+x2 <- x[which(x>0.0000)]
 
 # No, do the quantile clasification, in this case, given the values index, the intervals will be generated
 brks <- classIntervals(x2,n=5,style = "quantile")
@@ -223,7 +223,7 @@ for(i in 1:length(colnames(CoorDist2))){
   
   print(paste(paste("Iteration",i,sep = " "), paste("of", length(colnames(CoorDist2)), sep=" "),sep=" "))
   
-  PBS <- BayesSlope(x = CoorDist2[,i], y= IndDist2[,i], nSubj = length(IndDist2[,1]), ploting = F)
+  PBS <- BayesSlope(x = CoorDist2[,i], y= IndDist2[,i], nSubj = length(IndDist2[,1]), ploting = F, Xlab = "Dist~CI")
   
   PostBayesSlope <- c(PostBayesSlope, PBS)
   
@@ -233,7 +233,7 @@ PostBayesSlope
 
 hist(PostBayesSlope)
 
-ggplot()+geom_histogram(aes(PostBayesSlope))
+ggplot()+geom_density(aes(PostBayesSlope))
 
 
 ###########################################################################
@@ -321,7 +321,7 @@ for(i in 1:length(colnames(CoorDist2))){
   
   print(paste(paste("Iteration",i,sep = " "), paste("of", length(colnames(CoorDist2)), sep=" "),sep=" "))
   
-  PBS <- BayesSlope(x = CoorDist2[,i], y= IndDist2[,i], nSubj = length(IndDist2[,1]))
+  PBS <- BayesSlope(x = CoorDist2[,i], y= IndDist2[,i], nSubj = length(IndDist2[,1]), ploting = F, Xlab = "Dist~CI")
   
   PostBayesSlope2 <- c(PostBayesSlope2, PBS)
   
@@ -335,12 +335,12 @@ hist(PostBayesSlope2)
 
 setwd("~/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
 
-png("CIvsDist.png", width = 1000, height = 800)
-ggplot()+geom_histogram(aes(PostBayesSlope2))+
+png("CIvsDist2.png", width = 1000, height = 800)
+ggplot()+geom_density(aes(PostBayesSlope2), fill="black", alpha=.5)+
   ylab(NULL)+xlab("Posterior Slope Means")+
-  geom_text(aes(.05,16), label=paste("Mean",round(mean(PostBayesSlope2),digits=3),sep = ": "), size=15)+
-  geom_text(aes(.05,14), label=paste("Max",round(max(PostBayesSlope2),digits=3),sep = ": "), size=15)+
-  geom_text(aes(.05,12), label=paste("Min",round(min(PostBayesSlope2),digits=3),sep = ": "), size=15)+
+  geom_text(aes(.05,4), label=paste("Mean",round(mean(PostBayesSlope2),digits=3),sep = ": "), size=15)+
+  geom_text(aes(.05,3), label=paste("Max",round(max(PostBayesSlope2),digits=3),sep = ": "), size=15)+
+  geom_text(aes(.05,2), label=paste("Min",round(min(PostBayesSlope2),digits=3),sep = ": "), size=15)+
   theme(axis.text.x=element_text(size=30),
         axis.text.y=element_text(size=30),
         axis.ticks=element_blank(),
