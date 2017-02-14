@@ -1,3 +1,24 @@
+## Autor
+# Leon-Alvarado, Omar Daniel.
+# leon.alvarado12@gmail.com
+
+## License
+# The follow script was created under the GNU/GPLv2. license.
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+
+## Title
+# Complementarity index with areas of endemism
+
+## Description
+# This script compares the Q5 cells obtained from the three different cells sized used. 
+# Three comparison are made:
+# 
+# 1. (N° of 0.25° in 0.50°) / Total 0.25°
+# 2. (N° of 0.25° in 1°) / Total 0.25°
+# 2. (N° of 0.50° in 1°) / Total 0.50°
+
+################################################################################
+
 # Load libraries
 library(vegan)
 library(maptools)
@@ -32,6 +53,9 @@ g25.50 <- c()
 g25.1 <- c()
 g50.1 <- c()
 
+###################################################
+# 0.25° in 0.50°
+
 for(i in 1:length(pos25.Q5)){
   
   pos <- pos25.Q5[i]
@@ -53,6 +77,7 @@ for(i in 1:length(pos25.Q5)){
 one <- length(unique(g25.50))/length(pos25.Q5)
 
 #################################################
+# 0.25° in 1°
 
 for(i in 1:length(pos25.Q5)){
   
@@ -74,7 +99,8 @@ for(i in 1:length(pos25.Q5)){
 
 two <- length(unique(g25.1))/length(pos25.Q5)
 
-################################################################
+###################################################
+# 0.50° in 1°
 
 for(i in 1:length(pos50.Q5)){
   
@@ -95,6 +121,9 @@ for(i in 1:length(pos50.Q5)){
 
 
 three <- length(unique(g50.1))/length(pos50.Q5)
+
+#######################################################
+# Generate the output matrix
 
 comparison <- cbind(one*100,two*100,three*100)
 colnames(comparison) <- c("0.25° in 0.50°", "0.25° in 1°", "0.50° in 1°")
