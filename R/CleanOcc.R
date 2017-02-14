@@ -1,3 +1,17 @@
+## Autor
+# Leon-Alvarado, Omar Daniel.
+# leon.alvarado12@gmail.com
+
+## License
+# The follow script was created under the GNU/GPLv2. license.
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+
+## Title
+# Occurrences clean
+
+## Description
+# This script remove all occurrences that are outside of the NAB polygons used in the study
+
 ## Load libraries
 
 library(rgeos)
@@ -26,13 +40,19 @@ sp.dist <- read.csv("Richness.occ",header = T)
 # Write the new table.
 #write.csv(data,"mammals2.occ",row.names=F,col.names=T,quote=F) 
 
-head(sp.dist,3L)
+head(sp.dist,3L) # Check the results
+
+# Change directory and read the NAB polygon
 
 setwd("~/Documentos/Omar/Tesis/Scripts/Distribution/shp/NAB/")
 
 NAB.poly <- read.shp("NAB.shp")
 
+# Create a vector where the outside occurrences will be put
+
 out.occ <- c()
+
+# Found the outside occurrences and remove it from all the occurrences
 
 for(i in 1:length(sp.dist$Sp)){
   
