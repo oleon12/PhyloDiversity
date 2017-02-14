@@ -1,19 +1,40 @@
+## Autor
+# Leon-Alvarado, Omar Daniel.
+# leon.alvarado12@gmail.com
+
+## License
+# The follow script was created under the GNU/GPLv2. license.
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html
+
+## Title
+# Cells in PAs
+
+## Description 
+# This script compares the results obtained from the grid cells prioritization and the PAs
+# Two approaches are implemented:
+# 1. Compare how many Q5 cells match with a PA
+#  Here, the count of cells are made using the next rules
+#
+#    -If the 4 points of the cell are inside, then the cell get a value of 1
+#    -If 3 points of the cell are inside, then the cell get a value of 0.75
+#    -If 2 points of the cell are inside, then the cell get a value of 0.50
+#    -If 1 point of the cell are inside, the the cell get a value of 0.25
+#
+#2. Compare the percentage of PA that are inside a cell
+#  Here, only were evaluate if the 50% or the 100% of a PA are inside a cell
+
+############################################################################
+
 # Load libraries
-library(vegan)
 library(maptools)
-library(RColorBrewer)
-library(classInt)
-library(maps)
-library(maptools)
-library(dismo)
 library(shapefiles)
 library(SDMTools)
 
 ## Go to the work directory where are the shape poly 
 setwd("/home/omar/Documentos/Omar/Tesis/Taxa/Results/Final2/RawIndex_R/")
-# Read the shape file
+# Read the shape file and find only the position of the Q5 cells
 grid <- readShapePoly("Grid25_AvTD.shp")
-pos.Q5 <- grep("Q5", grid$Index)
+pos.Q5 <- which(grid$Index=="Q5")
 pos.Q5 <- pos.Q5+1
 #
 setwd("~/Documentos/Omar/Tesis/Scripts/Distribution/shp/Grid/")
@@ -29,6 +50,9 @@ PNNinCell100 <- c()
 PNNinCell50 <- c()
 CellinPNN <- c()
 
+#######################################################################
+#                     Approach 1: Q5 cells in PAs                     #
+#######################################################################
 
 for(i in 1:length(pos.Q5)){
   
@@ -59,6 +83,9 @@ for(i in 1:length(pos.Q5)){
 
 sum(CellinPNN) / length(pos.Q5)
 
+#######################################################################
+#                     Approach 2: PAs in Q5 cell                      #
+#######################################################################
 
 for(i in 1:length(PNN.names)){
   
@@ -86,6 +113,4 @@ PNNinCell
 unique(PNNinCell50)
 unique(PNNinCell100)
 
-length(PNNinCell)/length(PNN.names)
-
-
+length(PNNinCell)/length(
