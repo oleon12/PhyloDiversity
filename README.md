@@ -46,7 +46,7 @@ The final result are three objects:
 - A table with information about the species such Branch Length of each one or if is Endemic or not.
 - A Table also with information such number of nodes of the phylogeny, the distance between the tip and the root, number of tips in the phylogeny. 
 
-Please, denote that at the end, we save the index values separately by Area and Index. 
+Please, denote that we save the index values separately by Area and Index. 
 
 > _At the end of the script you will find a code to plot some information obtained from the data, that code was just for our personal purpose, so you cand avoid it if you want._
 
