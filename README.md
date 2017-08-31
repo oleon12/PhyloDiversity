@@ -23,7 +23,8 @@ ___
 
 **Distributions**
 
-
+```
 First, we need to download the occurrences for each taxon, here we use the [Occ_Download.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Occ_Download.R) script. For this step you need the polygon of the study area (Northern Andean Block here) and the name of the taxon. You can use any taxonomic level in the search (Orden, Family, Genera or Species), but given our experience we recommended use only Genera or Species level. At the end, the results is a CSV file with three columns: Species, Longitud and Latitude.
 
-_Please, be carefully with the append parameter in the last write.table command, it only works properly if you add informtion over a existing file, but if you create a file with this paramater set TRUE will generated a Warning message_
+_Please, be careful with the append parameter in the last write.table command, it only works properly if you add informtion over a existing file, but if you create a file with this paramater set TRUE will generated a Warning message_
+```
