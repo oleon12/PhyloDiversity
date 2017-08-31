@@ -51,3 +51,11 @@ Please, denote that we save the index values separately by Area and Index.
 > _At the end of the script you will find a code to plot some information obtained from the data, that code was just for our personal purpose, so you cand avoid it if you want._
 
 ___
+
+**Prioritization**
+
+Once we have the index values it is time to prioritiza which areas contain more evolutive information and are the most importan for conservation purpose. Now we use the [RtoGIS.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/RtoGIS.R) script. We decide to use the AvTD index using the grid cell size of 0.25°.
+
+This script take all cells values and divide it in Quantiles, then the cells whith index values within the last Quantile (Q5) are identified, then the cells with index values within the Q4 and so on until the Q2. Once all grid cell were identified to which Quantile belong given their index value, a new object was created labeling each grid cell with their Quantile, then, this object was added to the attibute table in the Shape File of the grid cell and save again as a Shape File.
+
+The Shape File generated can be reade in any GIS software, in this case we use [QGIS](https://www.qgis.org/en/site/index.html) for this task. In summary, we load the Shape File in QGIS and each cell received a color given their Quantile label, so at the end we obtained cells with 4 colours corresponding to 4 Quantile labels (Q5, Q4, Q3 and Q2), so in this way we be able to identify the Q5 cells, our cells of interest.
