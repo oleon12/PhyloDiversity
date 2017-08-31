@@ -13,5 +13,9 @@ For phylogenetic diversity index (or at least with the approcha that we implemen
   2. Phylogenies
   
   
-First, you must choose your taxon or taxa, so you can use your own selection rules or if you desire, you can follow our [selection rules](https://github.com/oleon12/PhyloDiversity/blob/master/Img/Diagrama_Flujo.png)
+First, you must choose your taxon or taxa, so you can use your own selection rules, or if you desire you can follow our [rules](https://github.com/oleon12/PhyloDiversity/blob/master/Img/Diagrama_Flujo.png).
+
+___
+
+Once you had been selected your taxon or taxa you sould create the data for the distribution and phylogenies. Basically for phylogenies you can use the algorithm of predilection, but remeber that only TD index do not take into account branch lengths. Our code was build for tress in [Newick format] (http://evolution.genetics.washington.edu/phylip/newicktree.html), so we stongly recommended fit your trees in this format.
 
