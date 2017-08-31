@@ -28,4 +28,6 @@ ___
 
 > *_Please, be careful with the append parameter in the last write.table command, it only works properly if you add informtion over a existing file, but if you create a file with this paramater set TRUE will generated a Warning message_
 
-2. Now, with the occurrences downloades it is time to create the absence-presence matrix. This matrix is just a table with Species as rows and Areas as columns, where, if a species is present in an area, the intersection will be filled with 1, and 0 if the species is absent. For this task, we use the [Absence.Presence_Matrix.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Absence.Presence_Matrix.R) script.
+2. Now, with the occurrences downloades it is time to create the absence-presence matrix. This matrix is just a table with Species as rows and Areas as columns, where, if a species is present in an area, the intersection will be filled with 1, and 0 if the species is absent. For this task, we use the [Absence.Presence_Matrix.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Absence.Presence_Matrix.R) script. 
+
+To use this script you nedd the occurences (previously downloaded) and polygons in Shape Files (Areas). In this case we use three different areas: Areas of endemism, Grid cells and Protected Areas. All of these areas are in Shape Files. We strongly recommended that all areas be inside in one file, for example, we use more than 100 Protected Areas, however, all areas are inside in a single Shape File. This recomendation is just for save memory.
