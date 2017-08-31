@@ -40,6 +40,12 @@ Now, we already have the two necesary data (Species Distribution and Phylogenies
 
 Here we use the [Multi.Index_Calculation.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Multi.Index_Caculation.R) script, which use multiple phylogenies in a **MultiPhylo** object and multiple areas in a **List** object. This script is a little complex because use loops inside loops, so if you want to modify or understand what it does, please read it with a lot of patience.
 
-The final result are three objects: 1. A **List** object which contain the three index values for all set of areas; 2. A table with information about the species such Branch Length of each one or if is Endemic or not; and 3. A Table also with information such number of nodes of the phylogeny, the distance between the tip and the root, number of tips in the phylogeny. Please, denote that at the end, we save the index values separately by Area and Index. At the end of the script you will find a code to plot some information obtained from the data, that code was just for our personal propose, so you cand avoid it if you want.
+The final result are three objects: 
+
+- A **List** object which contain the three index values for all set of areas.
+- A table with information about the species such Branch Length of each one or if is Endemic or not.
+- A Table also with information such number of nodes of the phylogeny, the distance between the tip and the root, number of tips in the phylogeny. 
+
+Please, denote that at the end, we save the index values separately by Area and Index. At the end of the script you will find a code to plot some information obtained from the data, that code was just for our personal propose, so you cand avoid it if you want.
 
 ___
