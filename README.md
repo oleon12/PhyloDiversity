@@ -77,4 +77,10 @@ Also, besides the prioritization we want to know the dependence of the Phylogene
 
 ___
 
+**Endemic species**
 
+Another question that we wanted to answer was the contribution of Endemic Species to the Phylogenetic Diversity, here we considere a species with their distribution restricted to an area of endemism as endemic. 
+
+1. First, we recalculated the three Phylogenetic Diversity indices removing the 25%, 50%, 75% and 100% of endemic species from the distribution data with the [Endemic_MultindexCalc.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Endemic_MultindexCalc.R).
+
+2. Then, with the results of the previous step whe build the [Endemic_Plot-1.0.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Endemic_Plot-1.0.R) script to plot the results. This script fit perfectly with our data, so if you want to used for your data you can modified, however, results with more than 10 areas are very difficult to visualized.
