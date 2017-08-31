@@ -48,6 +48,6 @@ The final result are three objects:
 
 Please, denote that at the end, we save the index values separately by Area and Index. 
 
-> _At the end of the script you will find a code to plot some information obtained from the data, that code was just for our personal propose, so you cand avoid it if you want._
+> _At the end of the script you will find a code to plot some information obtained from the data, that code was just for our personal purpose, so you cand avoid it if you want._
 
 ___
