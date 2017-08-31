@@ -13,7 +13,5 @@ For phylogenetic diversity index (or at least with the approcha that we implemen
   2. Phylogenies
   
   
-link:https://github.com/oleon12/PhyloDiversity/blob/master/Img/Diagrama_Flujo.png [Selection Rules]
-
-[Selection Rules](https://github.com/oleon12/PhyloDiversity/blob/master/Img/Diagrama_Flujo.png)
+First, you must choose your taxon or taxa, so you can use your own selection rules or if you desire, you can follow our [selection rules](https://github.com/oleon12/PhyloDiversity/blob/master/Img/Diagrama_Flujo.png)
 
