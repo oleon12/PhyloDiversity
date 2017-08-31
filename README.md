@@ -66,3 +66,9 @@ Once we have the index values it is time to prioritiza which areas contain more 
 This script take all cells values and divide it in Quantiles, then the cells whith index values within the last Quantile (Q5) are identified, then the cells with index values within the Q4 and so on until the Q2. Once all grid cell were identified to which Quantile belong given their index value, a new object was created labeling each grid cell with their Quantile, then, this object was added to the attibute table in the Shape File of the grid cell and save again as a Shape File.
 
 The Shape File generated can be reade in any GIS software, in this case we use [QGIS](https://www.qgis.org/en/site/index.html) for this task. In summary, we load the Shape File in QGIS and each cell received a color given their Quantile label, so at the end we obtained cells with 4 colours corresponding to 4 Quantile labels (Q5, Q4, Q3 and Q2), so in this way we was able to identify the Q5 cells, our cells of interest.
+
+___
+
+**Correlations**
+
+Also, besides the prioritization we want to know the dependenc of the Phylogenetic Diversity indices used with the species richness. For this we decided to implement a Bayesian Approach following [Kruschke. 2014](https://books.google.es/books?hl=es&lr=&id=FzvLAwAAQBAJ&oi=fnd&pg=PP1&dq=Doing+Bayesian+data+analysis:+A+tutorial+with+R,+JAGS,+and+Stan,+2nd+edn&ots=CfpkO0ydXE&sig=be7YfMbeKSV3RIttp6r-xjCfbxs#v=onepage&q=Doing%20Bayesian%20data%20analysis%3A%20A%20tutorial%20with%20R%2C%20JAGS%2C%20and%20Stan%2C%202nd%20edn&f=false) using a Bayesian Simple Linear Regression. Here, we modified the Script from Kruschke ([SimpleLinearRegressionJags.R](http://www.indiana.edu/~kruschke/DoingBayesianDataAnalysis/Programs/SimpleLinearRegressionJags.R)) 
