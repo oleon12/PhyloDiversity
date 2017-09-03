@@ -96,3 +96,11 @@ Finally, our final goal with this work was to calculated how much Phylogenetic D
 > _Here, we avoid the contribution calculated with the PNN+ label, which correspond to the PNN1 object_
 
 ___
+___
+
+**Another scripts that we used**
+
+1. Calculate the Complementarity Index for the Areas of Endemism: [AreasEndemism_CI.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/AreasEndemism_CI.R)
+2. Calculate the Complementarity Index for the Q5 cells: [Q5_Complementarity.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Q5_Complemntarity.R)
+2. Number of Q5 cells that are within the PAs: [CellsInPAs.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/CellsInPAs.R) and [Q5inPNN.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Q5inNPNN.R)
+3. Number of Q5 cells that are within the Areas of endemism: [Q5inAreas.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Q5inAreas.R)
