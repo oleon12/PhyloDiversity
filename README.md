@@ -10,7 +10,9 @@ Hi, this is the repository for:
 
 
 
-Here, all the data and R-script used for the analyses are stored. Everything here is under the [GPL V2 lincense](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html). So, you can use our data if you desire, but don't forget the cite. For a detailed explanaiton about the methods that we used, please carefully read the following document. 
+Here, all the data and R-script used for the analyses are stored. Everything here is under the [GPL V2 lincense](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html). So, you can use our data if you desire, but don't forget the cite. For a detailed explanaiton about the methods that we used, please carefully read the following document. }
+
+> _Remember, if you will use any of the scripts stored here, you only have to change the **Files Names** and the **Working Directory**, and it will work perfectly (if not, please email me)_
 
 ___
 
@@ -91,6 +93,6 @@ ___
 
 Finally, our final goal with this work was to calculated how much Phylogenetic Diversity had the protected areas within the NAB and what is their contribution to the total of the Phylogenetic Diversity. Here we calculate the Phylogenetic Diversity indices with the absence/presence matrix for tha PA areas. Here, we calculate the Phylogenetic Diversity of each PA, the Phylogenetic Diversity of all PAs and finally the Phylogenetic Diversity of the whole NAB. Once all calculations are made, we compute the contribution of the PAs to the total Phylogenetic Diversity. Everything was mde with the [PNN_analysis.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/PNN_analysis.R) script.
 
-> _Here, we avoid the contribution calculated with the PNN+ label, which correspond to the PNN1 object__
+> _Here, we avoid the contribution calculated with the PNN+ label, which correspond to the PNN1 object_
 
 ___
