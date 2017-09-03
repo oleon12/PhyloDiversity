@@ -101,6 +101,12 @@ ___
 **Another scripts that we used**
 
 1. Calculate the Complementarity Index for the Areas of Endemism: [AreasEndemism_CI.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/AreasEndemism_CI.R)
-2. Calculate the Complementarity Index for the Q5 cells: [Q5_Complementarity.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Q5_Complemntarity.R)
+2. Calculate the Complementarity Index for the grid cells: [Q5_Complementarity.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Q5_Complemntarity.R)
+3. Calculate the Complementarity Index just between Q5 cells: [Complementarity_Q5vsQ5.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Complementaroty_Q5vsQ5.R)
 2. Number of Q5 cells that are within the PAs: [CellsInPAs.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/CellsInPAs.R) and [Q5inPNN.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Q5inNPNN.R)
 3. Number of Q5 cells that are within the Areas of endemism: [Q5inAreas.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Q5inAreas.R)
+4. Calculate the geodesic distance between cells and their correlation (Bayesian) with their complementarity values: [ComplementarityVsDist.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/ComplementarityVsDist.R)
+5. Find the IUCN status of a set of species: [IUCN.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/IUCN.R)
+6. For the grid cells, find the richness of each one: [Richness_Grid.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Richness_Grid.R)
+5. Calculate the number of species distributed in each area of endemism, and the number of species distributed in each area od endemism that are included in the phylogeny: [SpeciesPerArea.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/SpeciesPerArea.R)
+5. Calculate the number of species for each taxonomic group used: [SpeciesPerGroup.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/SpeciesPerGroup.R)
