@@ -47,7 +47,7 @@ ___
 
 Now, we already have the two necesary data (Species Distribution and Phylogenies) for calculate the Phylogenetic Diversity indices. Here we implemented three indices: Taxonomic Distinctness (TD), a topological based index ([Vane-Wright _et al_., 1991](http://www.sciencedirect.com/science/article/pii/000632079190030D)); Phylogenetic Diversity (PD), a minimum spanning tree based index ([Faith, 1992](http://www.sciencedirect.com/science/article/pii/0006320792912013)) and Average Taxonomic Distinctness (AvTD), a pair-wise distance based index ([Clarke & Warwick, 1998](http://onlinelibrary.wiley.com/doi/10.1046/j.1365-2664.1998.3540523.x/full)).
 
-Here we use the [Multi.Index_Calculation.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Multi.Index_Caculation.R) script, which use multiple phylogenies in a **MultiPhylo** object and multiple areas in a **List** object. This script is a little complex because use loops inside loops, so if you want to modify or understand what it does, please read it with a lot of patience.
+Here we use the [Multi.Index_Calculation.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Multi.Index_Caculation.R) script, which use multiple phylogenies in a [**MultiPhylo**](https://www.rdocumentation.org/packages/ape/versions/4.1/topics/multiphylo) object and multiple areas in a [**List**](https://www.rdocumentation.org/packages/base/versions/3.4.1/topics/list) object. This script is a little complex because use loops inside loops, so if you want to modify or understand what it does, please read it with a lot of patience.
 
 The final result are three objects: 
 
