@@ -86,3 +86,11 @@ Another question that we wanted to answer was the contribution of Endemic Specie
 2. Then, with the results of the previous step we build the [Endemic_Plot-1.0.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/Endemic_Plot-1.0.R) script to plot the results. This script fit perfectly with our data, so if you want to used for your data you can modified, however, results with more than 10 areas are very difficult to visualized.
 
 ___
+
+**Protected Areas**
+
+Finally, our final goal with this work was to calculated how much Phylogenetic Diversity had the protected areas within the NAB and what is their contribution to the total of the Phylogenetic Diversity. Here we calculate the Phylogenetic Diversity indices with the absence/presence matrix for tha PA areas. Here, we calculate the Phylogenetic Diversity of each PA, the Phylogenetic Diversity of all PAs and finally the Phylogenetic Diversity of the whole NAB. Once all calculations are made, we compute the contribution of the PAs to the total Phylogenetic Diversity. Everything was mde with the [PNN_analysis.R](https://github.com/oleon12/PhyloDiversity/blob/master/R/PNN_analysis.R) script.
+
+> _Here, we avoid the contribution calculated with the PNN+ label, which correspond to the PNN1 object__
+
+___
