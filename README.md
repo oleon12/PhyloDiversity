@@ -4,7 +4,7 @@ ___
 Hi, this is the repository for:
 
 <p align="center">
- <b>Conserving Northern Andean Block: What Phylogenies Say</b><br>
+ <b>Phylogenetic diversity and the north Andean Block conservation</b><br>
  <b>Leon-Alvarado & Miranda-Esquivel (Submitted)</b><br>
 </p>
 
