@@ -11,14 +11,14 @@ library(ggplot2)
 library(gridExtra)
 library(factoextra)
 
-source("~/Documentos/Omar/Projects/PhyloDiv/R/phylo.id.table.R")
-source("~/Documentos/Omar/Projects/PhyloDiv/R/pd2 .b.R")
-source("~/Documentos/Omar/Projects/PhyloDiv/R/toNum.R")
-source("~/Documentos/Omar/Projects/PhyloDiv/R/match.phy.dist.R")
-source("~/Documentos/Omar/Projects/PhyloDiv/R/cstats.table.R")
-source("~/Documentos/Omar/Projects/PhyloDiv/R/cluster.stats.2.R")
-source("~/Documentos/Omar/Projects/PhyloDiv/R/phylo.beta.R")
-source("~/Documentos/Omar/Projects/PhyloDiv/R/get.cluster.n.R")
+source("...phylo.id.table.R")
+source("...pd2 .b.R")
+source("...toNum.R")
+source("...match.phy.dist.R")
+source("...cstats.table.R")
+source("...cluster.stats.2.R")
+source("...phylo.beta.R")
+source("...get.cluster.n.R")
 
 ########################################################################
 #                              Areas List                              #
