@@ -3,7 +3,7 @@
 ## [Omar Daniel Leon-Alvarado](https://leon-alvarado.weebly.com/) and [Daniel Rafael Miranda-Esquivel](https://www.researchgate.net/profile/Daniel-Miranda-Esquivel)
 
 <b>*Abstract*</b>
-<p align="justify">.
+<p align="justify">
 
 **Background.** The Northern Andean Block (NAB) harbors high biodiversity, being one of the most important areas of the Neotropics, nevertheless, the settlement of several human populations has triggered rapid transformations of the ecosystems, leading to the extinction or endangerment of many species. As phylogenetic diversity indices quantify the distinctness between species, they are an adequate tool to evaluate conservation priority areas. 
 
