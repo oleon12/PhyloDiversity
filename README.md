@@ -19,3 +19,10 @@ An interactive **map** with all results is available [here](https://rpubs.com/ol
 
 </p>
 
+Some methods used in the study are better explained throught images, "a picture is worth a thousand words".
+
+---
+
+**Groups selection rules**
+
+<img url="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Supplemental_Figure_S1.png">
