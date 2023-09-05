@@ -22,7 +22,7 @@ An interactive **map** with all results is available [here](https://rpubs.com/ol
 ---
 
 ## Some of the methods employed in the study are more effectively elucidated through visual representations, as the adage goes, 'a picture is worth a thousand words.'
----
+
 
 ### Groups selection rules
 
