@@ -2,6 +2,8 @@
 
 ## [Omar Daniel Leon-Alvarado](https://leon-alvarado.weebly.com/) and [Daniel Rafael Miranda-Esquivel](https://www.researchgate.net/profile/Daniel-Miranda-Esquivel)
 
+</br>
+
 <b>*Abstract*</b>
 <p align="justify">
 
