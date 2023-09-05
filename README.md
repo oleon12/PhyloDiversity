@@ -25,4 +25,4 @@ Some methods used in the study are better explained throught images, "a picture 
 
 **Groups selection rules**
 
-<img url="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Supplemental_Figure_S1.png">
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Supplemental_Figure_S1.png">
