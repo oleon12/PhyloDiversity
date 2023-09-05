@@ -16,10 +16,12 @@
 **Discussion.** Although the NAB's Andean region has been identified as the most crucial area in terms of Phylogenetic Diversity, there are also regions in the Amazonian Piedemonte and Pacific lowlands that exhibit high levels of Phylogenetic Diversity. Interestingly, some protected areas (PAs) have been found to harbor a higher amount of Phylogenetic Diversity than expected, given their smaller size. While the delimitation of new PAs and species richness has been the primary factor driving the expansion of PAs, it's also essential to consider the evolutionary information of the species if we want to conserve all aspects of biodiversity, or at least cover most of them. Therefore, using Phylogenetic Diversity measures and the results of this study can contribute to expanding the PAs network and improving connectivity between PAs. This will help conserve different aspects of biodiversity and ensure that evolutionary relationships between species are also preserved.
 
 An interactive **map** with all results is available [here](https://rpubs.com/oleon12/PhyloDiv)
-
+</br>
 </p>
 
-Some methods used in the study are better explained throught images, "a picture is worth a thousand words".
+---
+
+### Some methods used in the study are better explained throught images, "a picture is worth a thousand words".
 
 ---
 
