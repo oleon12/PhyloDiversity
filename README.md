@@ -31,3 +31,9 @@ An interactive **map** with all results is available [here](https://rpubs.com/ol
 The basic input data we utilized consists of an uncalibrated phylogeny featuring branch lengths, coupled with data representing species distribution. Specifically, these [distributions](https://github.com/oleon12/PhyloDiversity/tree/master/Data/Distributions) are CSV matrices that denote the presence or absence of species in individual cells.
 
 <img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Fig_1Mesa%20de%20trabajo%201.png">
+
+## Prioritization scheme
+
+We worked with a total of 93 taxonomic groups, each of which was equipped with its own associated phylogeny and distribution data. Our approach involved calculating the Average Taxonomic Distinctiveness (AvTD) for each of these taxonomic groups. Subsequently, we summed the AvTD values across all cells. To establish a prioritization scheme, we employed quantiles.
+
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Fig_2Mesa%20de%20trabajo%201.png">
