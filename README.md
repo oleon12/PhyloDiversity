@@ -44,3 +44,10 @@ We worked with a total of 93 taxonomic groups, each of which was equipped with i
 We began by identifying endemic species and excluding them from our analysis. Following this step, we randomly selected and removed 25%, 50%, 75%, and 100% of these endemic species. After each removal, we calculated the Average Taxonomic Distinctiveness (AvTD) index and conducted the prioritization process. It's worth noting that we repeated the removal process 100 times for 25%, 50%, and 75% removal scenarios, while the 100% removal was performed only once.
 
 <img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Fig_3Mesa%20de%20trabajo%201.png">
+
+## Data robustness
+
+We used a jackknife approach to evaluate the robustness of the phylogenetic data and the resulting prioritization.
+
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Fig_4Mesa%20de%20trabajo%201.png">
+
