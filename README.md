@@ -30,4 +30,4 @@ An interactive **map** with all results is available [here](https://rpubs.com/ol
 
 The basic input data we used is a no calibrated phylogeny with branch lengths and the species distribution. Indeed, the [distributions](https://github.com/oleon12/PhyloDiversity/tree/master/Data/Distributions) are CSV matrices of absence/presence in each cell.
 
-<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Supplemental_Figure_S1.png">
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Fig_1Mesa%20de%20trabajo%201.png">
