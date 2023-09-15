@@ -20,8 +20,14 @@ An interactive **map** with all results is available [here](https://rpubs.com/ol
 </p>
 
 
-## Some of the methods employed in the study are more effectively elucidated through visual representations, as the adage goes, 'a picture is worth a thousand words.'
+### Some of the methods employed in the study are more effectively elucidated through visual representations, as the adage goes, 'a picture is worth a thousand words.'
 
-### Groups selection rules
+## Groups selection rules
+
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Supplemental_Figure_S1.png">
+
+## Input data
+
+The basic input data we used is a no calibrated phylogeny with branch lengths and the species distribution. Indeed, the [distributions](https://github.com/oleon12/PhyloDiversity/tree/master/Data/Distributions) are CSV matrices of absence/presence in each cell.
 
 <img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Supplemental_Figure_S1.png">
