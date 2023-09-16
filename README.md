@@ -31,23 +31,23 @@ An interactive **map** with all results is available [here](https://rpubs.com/ol
 
 The basic input data we utilized consists of an uncalibrated phylogeny featuring branch lengths, coupled with data representing species distribution. Specifically, these [distributions](https://github.com/oleon12/PhyloDiversity/tree/master/Data/Distributions) are CSV matrices that denote the presence or absence of species in individual cells.
 
-<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Fig_1Mesa%20de%20trabajo%201.png">
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Methods_Fig_1.png">
 
 ## Prioritization scheme
 
 We worked with a total of 93 taxonomic groups, each of which was equipped with its own associated phylogeny and distribution data. Our approach involved calculating the Average Taxonomic Distinctiveness (AvTD) for each of these taxonomic groups. Subsequently, we summed the AvTD values across all cells. To establish a prioritization scheme, we employed quantiles.
 
-<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Fig_2Mesa%20de%20trabajo%201.png">
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Methods_Fig_2.png">
 
 ## Endemic species
 
 We began by identifying endemic species and excluding them from our analysis. Following this step, we randomly selected and removed 25%, 50%, 75%, and 100% of these endemic species. After each removal, we calculated the Average Taxonomic Distinctiveness (AvTD) index and conducted the prioritization process. It's worth noting that we repeated the removal process 100 times for 25%, 50%, and 75% removal scenarios, while the 100% removal was performed only once.
 
-<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Fig_3Mesa%20de%20trabajo%201.png">
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Methods_Fig_3.png">
 
 ## Data robustness
 
 We used a jackknife approach to evaluate the robustness of the phylogenetic data and the resulting prioritization.
 
-<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Fig_4Mesa%20de%20trabajo%201.png">
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Methods_Fig_4.png">
 
