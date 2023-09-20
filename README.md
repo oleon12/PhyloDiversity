@@ -26,7 +26,7 @@ An interactive **map** with all results is available [here](https://rpubs.com/ol
 
 ## Groups selection rules
 
-<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Supplemental_Figure_S1.png">
+<img src="https://github.com/oleon12/PhyloDiversity/blob/master/Supplementary_Material/Supplemental_Figure_S1_.png">
 
 ## Input data
 
